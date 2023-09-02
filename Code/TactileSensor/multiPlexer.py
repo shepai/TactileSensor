@@ -16,10 +16,10 @@ def select_channel(channel):
     S2.value(int(channel[1]))
     S3.value(int(channel[0]))
 
-def gather():
-    array=[]
-    for i in range(10):
-        select_channel(i)
+while True:
+    for channel in range(4):
+        select_channel(channel)
         value = SIG.read_u16()  # Read the analog value
-        array.append(value)
-    print(array)
+        print(f"Channel {channel}: {value}")
+        print(S0.value(),S1.value(),S2.value(),S3.value())
+        time.sleep(1)  # Adjust the delay as needed
