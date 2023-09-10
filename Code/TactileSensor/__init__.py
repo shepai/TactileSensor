@@ -54,15 +54,21 @@ class Board:
             except (OSError, serial.SerialException):
                 pass
         return result
-    def getSensor(self,x=5,y=5):
+    def getSensor(self,type_="flat",x=5,y=5):
         data=self.COM.exec('gather()').decode("utf-8").replace("\r\n","").replace("[","").replace("]","").replace(" ","")
-        data=data.split(",")
-        grid=np.zeros((x,y))
-        for i in range(x):
-            grid[i]=float(data[i])
-        for i in range(y):
-            grid[:,i]+=float(data[x+i])
+        grid=None
+        if type_=="flat":
+            data=data.split(",")
+            grid=np.zeros((x,y))
+            for i in range(x):
+                grid[i]=float(data[i])
+            for i in range(y):
+                grid[:,i]+=float(data[x+i])
+        elif type_=="round": #if round type return data
+            data=self.COM.exec('gather()').decode("utf-8").replace("\r\n","").replace("[","").replace("]","").replace(" ","")
+            grid=np.array(data).astype(float)
         return grid
+    
     
 B=Board()
 #get serial boards and connect to first one
