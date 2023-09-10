@@ -16,10 +16,17 @@ def select_channel(channel):
     S2.value(int(channel[1]))
     S3.value(int(channel[0]))
 
-def gather():
+a=[]
+def gather(low_pass=True,alpha=0.1):
     array=[]
     for i in range(10):
         select_channel(i)
         value = SIG.read_u16()  # Read the analog value
+        if low_pass:
+            value=(1-alpha)*a[i] + (alpha*value) #low pass filter
         array.append(value)
     print(array)
+    a=array.copy()
+    return array
+
+a=gather(low_pass=False)
