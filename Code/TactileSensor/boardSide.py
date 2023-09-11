@@ -8,6 +8,8 @@ S2 = machine.Pin(2,machine.Pin.OUT)  # GP2
 S3 = machine.Pin(3,machine.Pin.OUT)  # GP3
 SIG = machine.ADC(28)  # GP28
 
+a=[]
+
 # Function to select a channel on the multiplexer
 def select_channel(channel):
     channel=f'{channel:04b}'
@@ -16,8 +18,9 @@ def select_channel(channel):
     S2.value(int(channel[1]))
     S3.value(int(channel[0]))
 
-a=[]
+
 def gather(low_pass=True,alpha=0.1):
+    global a
     array=[]
     for i in range(10):
         select_channel(i)
