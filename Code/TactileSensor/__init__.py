@@ -54,8 +54,8 @@ class Board:
             except (OSError, serial.SerialException):
                 pass
         return result
-    def getSensor(self,type_="flat",x=5,y=5):
-        data=self.COM.exec('gather()').decode("utf-8").replace("\r\n","").replace("[","").replace("]","").replace(" ","")
+    def getSensor(self,type_="flat",x=5,y=5,alpha=0.1):
+        data=self.COM.exec('gather(alpha='+str(alpha)+')').decode("utf-8").replace("\r\n","").replace("[","").replace("]","").replace(" ","")
         grid=None
         if type_=="flat":
             data=data.split(",")
@@ -71,18 +71,3 @@ class Board:
         return grid
     
     
-B=Board()
-#get serial boards and connect to first one
-COM=""
-while COM=="":
-    try:
-        res=B.serial_ports()
-        print("ports:",res)
-        B.connect(res[0])
-        B.runFile("/its/home/drs25/Documents/GitHub/TactileSensor/Code/TactileSensor/boardSide.py") #C:/Users/dexte/OneDrive/Documents/GitHub/TactileSensor/Code/TactileSensor/boardSide.py
-        COM=res[0]
-    except IndexError:
-        time.sleep(1)
-
-    
-print(B.getSensor(type_="round"))
