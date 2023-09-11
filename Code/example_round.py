@@ -23,10 +23,11 @@ for i in range(100):
     round[i]=B.getSensor(type_="round")
     time.sleep(0.1)
 
+for i in range(len(round[0])):
+    round[:,i]=(round[:,i]-np.min(round[:,i]))/(np.max(round[:,i])-np.min(round[:,i]))#"""
 
 for i in range(len(round[0])):
-    if i not in [0,1,2,4,5,6]: #[0,1,2,4,5,6]
-        plt.plot([j/5 for j in range(len(round))],round[:,i],label="sensor "+str(i+1))
+    plt.plot([j/5 for j in range(len(round))],round[:,i],label="sensor "+str(i+1))
 #plt.plot([i/10 for i in range(len(unfiltered))],unfiltered,label="Un-filtered")
 plt.legend(loc="lower right")
 plt.title("Filtered round sensor")
