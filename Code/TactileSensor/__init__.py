@@ -66,6 +66,7 @@ class Board:
                 grid[:,i]+=float(data[x+i])
         elif type_=="round": #if round type return data
             data=self.COM.exec('gather()').decode("utf-8").replace("\r\n","").replace("[","").replace("]","").replace(" ","")
+            data=data.split(",")
             grid=np.array(data).astype(float)
         return grid
     
@@ -78,10 +79,10 @@ while COM=="":
         res=B.serial_ports()
         print("ports:",res)
         B.connect(res[0])
-        B.runFile("C:/Users/dexte/OneDrive/Documents/GitHub/TactileSensor/Code/TactileSensor/boardSide.py")
+        B.runFile("/its/home/drs25/Documents/GitHub/TactileSensor/Code/TactileSensor/boardSide.py") #C:/Users/dexte/OneDrive/Documents/GitHub/TactileSensor/Code/TactileSensor/boardSide.py
         COM=res[0]
     except IndexError:
         time.sleep(1)
 
     
-print(B.getSensor())
+print(B.getSensor(type_="round"))
