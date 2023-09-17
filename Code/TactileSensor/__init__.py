@@ -30,6 +30,17 @@ class Board:
         if self.COM==None:
             raise OSError("Connect to device before running file")
         self.COM.execfile(fileToRun) #run the file controlling the sensors
+    def autoConnect(self,file="C:/Users/dexte/OneDrive/Documents/GitHub/TactileSensor/Code/TactileSensor/boardSide.py"):
+        COM=""
+        while COM=="":
+            try:
+                res=self.serial_ports()
+                print("ports:",res)
+                self.connect(res[0])
+                self.runFile(file) #C:/Users/dexte/OneDrive/Documents/GitHub/TactileSensor/Code/TactileSensor/boardSide.py
+                COM=res[0]
+            except IndexError:
+                time.sleep(1)
     def serial_ports(self):
         """
         Read the all ports that are open for serial communication
