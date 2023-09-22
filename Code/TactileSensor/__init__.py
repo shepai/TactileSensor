@@ -30,8 +30,13 @@ class Board:
         if self.COM==None:
             raise OSError("Connect to device before running file")
         self.COM.execfile(fileToRun) #run the file controlling the sensors
-    def autoConnect(self,file="C:/Users/dexte/OneDrive/Documents/GitHub/TactileSensor/Code/TactileSensor/boardSide.py"):
+    def autoConnect(self,file=""):
         COM=""
+        if file=="": #defaut files for my PC
+            if sys.platform.startswith('win'):
+                file="C:/Users/dexte/OneDrive/Documents/GitHub/TactileSensor/Code/TactileSensor/boardSide.py"
+            else:
+                file="/its/home/drs25/Documents/GitHub/TactileSensor/Code/TactileSensor/boardSide.py"
         while COM=="":
             try:
                 res=self.serial_ports()
