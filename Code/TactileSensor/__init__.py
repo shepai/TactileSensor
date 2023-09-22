@@ -84,7 +84,7 @@ class Board:
         #difference=self.middle-grid
         processed=grid.copy()
         window_size=2
-        processed = np.convolve(processed, np.ones(window_size) / window_size, mode='same')
+        #processed = np.convolve(processed, np.ones(window_size) / window_size, mode='same')
         #if type(self.past_data)!=type(None): #work out change
         #    processed=np.abs((self.past_data-processed)/np.max(self.past_data))
         self.past_data=grid.copy()
