@@ -19,7 +19,7 @@ def select_channel(channel):
     S3.value(int(channel[0]))
 
 
-def gather(low_pass=True,alpha=0.1):
+def gather(low_pass=True,alpha=0.2):
     global a
     array=[]
     for i in range(10):
