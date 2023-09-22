@@ -134,6 +134,23 @@ class experiment:
             self.moveZ(i,1) #move back
         self.moveZ(1,1) #move back
         return np.array(a)
+    def pressures(self,cm_samples=2,step=0.5):
+        a=[]
+        Image=self.skin.getBinary() #get initial image
+        #self.skin.reset()
+        #self.old_T=self.skin.origin
+        self.move_till_touch(Image) #be touching the platform
+        
+        for i in range(num_samples):
+            self.moveZ(0.5,-1) #move down
+            self.moveX(1,-1)
+            data=self.sensor.getSensor(type_="round")
+            l_dt[i]=np.sum(vectors,axis=0)/len(vectors)
+            time.sleep(1)
+            self.moveZ(0.5,1) #move up
+            self.moveX(1,1)
+            time.sleep(1)
+        return np.array(a)
 
 
 
