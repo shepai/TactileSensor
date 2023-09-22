@@ -13,6 +13,8 @@ class Board:
     def __init__(self):
         self.COM=None
         self.VALID_CHANNELS=[i for i in range(10)]
+        self.past_data=None
+        self.middle=None
     def connect(self,com):
         """
         Connect to a com given
@@ -70,20 +72,31 @@ class Board:
             except (OSError, serial.SerialException):
                 pass
         return result
-    def getSensor(self,type_="flat",x=5,y=5,alpha=0.1):
+    def zero(self,alpha=0.1):
         data=self.COM.exec('gather(alpha='+str(alpha)+')').decode("utf-8").replace("\r\n","").replace("[","").replace("]","").replace(" ","")
-        grid=None
+        processed=data.split(",")
+        grid=np.array(processed).astype(float)
+        self.middle=np.average(grid)
+    def getSensor(self,type_="flat",x=5,y=5,alpha=0.6):
+        data=self.COM.exec('gather(alpha='+str(alpha)+')').decode("utf-8").replace("\r\n","").replace("[","").replace("]","").replace(" ","")
+        grid=np.array(data.split(",")).astype(float)
+        #self.zero()
+        #difference=self.middle-grid
+        processed=grid.copy()
+        window_size=2
+        processed = np.convolve(processed, np.ones(window_size) / window_size, mode='same')
+        #if type(self.past_data)!=type(None): #work out change
+        #    processed=np.abs((self.past_data-processed)/np.max(self.past_data))
+        self.past_data=grid.copy()
+        grid=processed.copy()
         if type_=="flat":
-            data=data.split(",")
             grid=np.zeros((x,y))
             for i in range(x):
-                grid[i]=float(data[i])
+                grid[i]=processed[i]
             for i in range(y):
-                grid[:,i]+=float(data[x+i])
+                grid[:,i]+=processed[x+i]
         elif type_=="round": #if round type return data
-            data=self.COM.exec('gather()').decode("utf-8").replace("\r\n","").replace("[","").replace("]","").replace(" ","")
-            data=data.split(",")
-            grid=np.array(data).astype(float)
+            pass
         return grid
     
     
