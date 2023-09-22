@@ -3,7 +3,7 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
-import keyboard  # using module keyboard
+#import keyboard  # using module keyboard
 
 matplotlib.use('TkAgg')
 
@@ -18,16 +18,18 @@ i=0
 while True:
     image=B.getSensor(type_="flat")
     data=B.getSensor(type_="round")
-    top = np.where(image < top, image,top)
-    minimums=np.where(data < minimums, data,minimums)
-    matrix=(image-top )/np.max(image) 
-    matrix[matrix<0.2]=0
+    #top = np.where(image < top, image,top)
+    #minimums=np.where(data < minimums, data,minimums)
+    #matrix=(image-top )/np.max(image) 
+    #matrix[matrix<0.2]=0
+    matrix=image.copy()
+    matrix=(matrix-np.mean(matrix))/np.std(matrix)
     plt.subplot(1, 2, 1)
     if i>=len(round):
         round=np.roll(round, -1,axis=0)
-        round[-1]=data-minimums
+        round[-1]=B.getSensor(type_="round")
     else:
-        round[i]=data-minimums
+        round[i]=B.getSensor(type_="round")
     i+=1
     plt.cla()
     for j in range(len(round[0])):
@@ -36,14 +38,16 @@ while True:
         #np.gradient(num)
         plt.plot([k/5 for k in range(len(round))],num,label="sensor "+str(j+1))
     plt.title('Plot')
-
+    im=np.abs(past-matrix)
+    im[im<0.01]=0
     plt.subplot(1, 2, 2)
-    plt.imshow(matrix)
+    plt.imshow(im)
     plt.axis('off')
     plt.title('Image representation')
-    past=image.copy()
+    
+    past=matrix.copy()
     # Adjust the spacing between subplots for better visualization
     plt.tight_layout()
     plt.pause(0.1)
-    if keyboard.is_pressed('q'):  # if key 'q' is pressed 
-        break
+    #if keyboard.is_pressed('q'):  # if key 'q' is pressed 
+        #break

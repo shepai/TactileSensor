@@ -3,7 +3,7 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
-import keyboard
+#import keyboard
 matplotlib.use('TkAgg')
 
 B=ts.Board()
@@ -31,6 +31,7 @@ while True:
     plt.title("Filtered round sensor")
     plt.xlabel("Time (seconds)")
     plt.ylabel("Analogue value")
+    plt.ylim([20000,25000])
     plt.pause(0.1)
-    if keyboard.is_pressed('q'):  # if key 'q' is pressed 
-        break
+    #if keyboard.is_pressed('q'):  # if key 'q' is pressed 
+        #break

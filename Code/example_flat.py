@@ -3,7 +3,7 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
-import keyboard  # using module keyboard
+#import keyboard  # using module keyboard
 
 matplotlib.use('TkAgg')
 
@@ -15,15 +15,19 @@ past=B.getSensor(type_="flat")
 i=0
 while True:
     image=B.getSensor(type_="flat")
-    top = np.where(image < top, image,top)
-    matrix=(image-top )/np.max(image) 
+    matrix=image.copy()
+    matrix=(matrix-np.mean(matrix))/np.std(matrix)
+    #top = np.where(image < top, image,top)
+    #matrix=(image-top )
     #print(np.diff(np.array([past.flatten(),image.flatten()]),axis=0).shape)
     #matrix=1 * np.diff(np.array([past.flatten(),image.flatten()]),axis=0).reshape(5,5)
-    matrix[matrix<0.2]=0
-    #matrix[matrix>255]=255
+    matrix[matrix<0]=0
+    #matrix[matrix>255]=255qqqqq
+    im=np.abs(past-matrix)
+    im[im<0.01]=0
     past=matrix.copy()
     plt.imshow(matrix)
     plt.axis('off')
     plt.pause(0.1)
-    if keyboard.is_pressed('q'):  # if key 'q' is pressed 
-        break
+    #if keyboard.is_pressed('q'):  # if key 'q' is pressed 
+        #break
