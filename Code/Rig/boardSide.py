@@ -42,7 +42,7 @@ def get_pressure():
         raw_value = pot.read_u16()
         filtered_value = alpha * raw_value + (1 - alpha) * filtered_value
         a.append(raw_value)
-        utime.sleep(0.1)
+        utime.sleep(0.005)
     print(sum(a)//50)
 
 b=Move()
