@@ -14,8 +14,8 @@ input("Press enter once you have added your rig device")
 exp=controller.experiment(B)
 #exp.moveZ(1,1)
 CM=1
-ST=0.2
-samples=10
+ST=0.1
+samples=100
 data=np.zeros((samples,len(np.arange(0, CM, ST)),10))
 weights=np.zeros((samples,len(np.arange(0, CM, ST))))
 t1=time.time()
@@ -26,8 +26,8 @@ for i in range(samples):
     weights[i]=weight
     exp.moveZ(1,1)
 
-np.save("C:/Users/dexte/Documents/GitHub/TactileSensor/Code/Data collection/pressures/pressureVals_1",data)
-np.save("C:/Users/dexte/Documents/GitHub/TactileSensor/Code/Data collection/pressures/pressureWeights_1",weights)
+    np.save("C:/Users/dexte/Documents/GitHub/TactileSensor/Code/Data collection/pressures/pressureVals_2",data)
+    np.save("C:/Users/dexte/Documents/GitHub/TactileSensor/Code/Data collection/pressures/pressureWeights_2",weights)
 
 print("Exiting...")
 exp.moveZ(2,1)
