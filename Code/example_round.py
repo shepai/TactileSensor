@@ -31,7 +31,7 @@ while True:
     plt.title("Filtered round sensor")
     plt.xlabel("Time (seconds)")
     plt.ylabel("Analogue value")
-    plt.ylim([20000,25000])
+    #plt.ylim([20000,25000])
     plt.pause(0.1)
     #if keyboard.is_pressed('q'):  # if key 'q' is pressed 
         #break
