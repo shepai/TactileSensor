@@ -3,7 +3,7 @@ import utime
 from machine import freq, Pin, ADC
 
 class Move:
-    def __init__(self,speed=20):
+    def __init__(self,speed=40):
         self.board=PicoRobotics.KitronikPicoRobotics()
         self.speed=speed
         self.board.motorOff(1)
@@ -14,6 +14,12 @@ class Move:
             direction="r"
         for step in range(abs(num)):
             self.board.step(2,direction,speed)
+    def moveX_stepper(self,num,speed=20):
+        direction="f"
+        if num<0:
+            direction="r"
+        for step in range(abs(num)):
+            self.board.step(1,direction,speed)
     def moveX(self,num,stopFunc=None):
         direction="f"
         if num<0:
