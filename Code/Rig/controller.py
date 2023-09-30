@@ -121,4 +121,19 @@ class experiment:
             self.moveZ(i,1) #move back
         self.moveZ(1,1) #move back
         return np.array(a),np.array(d)
+    def direction(self,trials,steps):
+        a=[]
+        self.moveZ(1,1) #move back
+        for i in range(0, trials):
+            #print("depth:",i)
+            self.moveTillTouch() #be touching the platform
+            a_=[]
+            for i in range(steps):
+                mag=self.sensor.getSensor(type_="round")
+                self.moveX(0.5,1)
+                a_.append(mag)
+            self.moveX(steps*0.5,-1) #move x back
+            a.append(a_)
+            self.moveZ(1,1) #move back
+        return np.array(a)
     
