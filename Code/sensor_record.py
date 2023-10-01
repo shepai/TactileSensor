@@ -10,14 +10,15 @@ B=ts.Board()
 B.autoConnect()
 
 max_time=10
-dt=0.1
+dt=0.03
 t1=time.time()
 array=[]
 T=0
+print("Recording")
 while T<max_time:
     T+=dt
     array.append(B.getSensor(type_="round"))
 
 array=np.array(array)
-np.save("C:/Users/dexte/OneDrive/Documents/GitHub/TactileSensor/Assets/Recorded_data/HardTouch",array)
+np.save("C:/Users/dexte/Documents/GitHub/TactileSensor/Assets/Recorded_data/north-west",array)
 print(time.time()-t1,"Seconds")
