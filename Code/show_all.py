@@ -24,6 +24,7 @@ while True:
     #matrix[matrix<0.2]=0
     matrix=image.copy()
     matrix=(matrix-np.mean(matrix))/np.std(matrix)
+    matrix[matrix<0]=0
     plt.subplot(1, 2, 1)
     if i>=len(round):
         round=np.roll(round, -1,axis=0)
@@ -38,16 +39,15 @@ while True:
         #np.gradient(num)
         plt.plot([k/5 for k in range(len(round))],num,label="sensor "+str(j+1))
     plt.title('Plot')
-    im=np.abs(past-matrix)
-    im[im<0.01]=0
+    
     plt.subplot(1, 2, 2)
-    plt.imshow(im)
+    plt.imshow(matrix)
     plt.axis('off')
     plt.title('Image representation')
     
     past=matrix.copy()
     # Adjust the spacing between subplots for better visualization
     plt.tight_layout()
-    plt.pause(0.1)
+    plt.pause(0.01)
     #if keyboard.is_pressed('q'):  # if key 'q' is pressed 
         #break
