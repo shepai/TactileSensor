@@ -8,19 +8,19 @@ class Move:
         self.speed=speed
         self.board.motorOff(1)
         self.pushX=Pin(4 , Pin.IN, Pin.PULL_UP)
-    def moveZ(self,num,speed=20):
+    def moveZ(self,num,speed=40):
         direction="f"
         if num<0:
             direction="r"
         for step in range(abs(num)):
             self.board.step(2,direction,speed)
-    def moveX_stepper(self,num,speed=20):
+    def moveX(self,num,speed=40):
         direction="f"
         if num<0:
             direction="r"
         for step in range(abs(num)):
             self.board.step(1,direction,speed)
-    def moveX(self,num,stopFunc=None):
+    def moveX_dc(self,num,stopFunc=None):
         direction="f"
         if num<0:
             direction="r"
