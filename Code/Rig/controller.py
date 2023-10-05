@@ -85,7 +85,7 @@ class experiment:
         self.control=Board()
         self.control.autoConnect(path) #autoconnect and run file
 
-    def moveTillTouch(self,threshold=300):
+    def moveTillTouch(self,threshold=65319):
         touched=False
         #get moving
         for i in range(100):
@@ -93,8 +93,10 @@ class experiment:
         while not touched:
             s=self.sensor.getSensor(type_="round")
             #print(np.average(s),self.control.getWeight())
-            self.control.moveZ(-1)
-            if self.control.getWeight()>threshold: touched=True
+            self.control.moveZ(1)
+            #print(self.control.getWeight())
+            if self.control.getWeight()<threshold: touched=True
+        print("Touching surface")
     def moveZ(self,cm,dir): #dir must be 1 or -1
         assert dir==1 or dir==-1, "Incorrect direction, must be 1 or -1"
         cm=cm*17 #17 steps per cm
@@ -113,27 +115,27 @@ class experiment:
             #print("depth:",i)
             mag=self.sensor.getSensor(type_="round")
             time.sleep(1)
-            self.moveZ(i,-1) #move down
+            self.moveZ(i,1) #move down
             time.sleep(1)
             data=self.sensor.getSensor(type_="round")
             a.append(data)
             d.append(self.control.getWeight())
-            self.moveZ(i,1) #move back
+            self.moveZ(i,-1) #move back
         self.moveZ(1,1) #move back
         return np.array(a),np.array(d)
     def direction(self,trials,steps):
         a=[]
-        self.moveZ(1,1) #move back
+        self.moveZ(1,-1) #move back
         for i in range(0, trials):
             #print("depth:",i)
             self.moveTillTouch() #be touching the platform
             a_=[]
             for i in range(steps):
                 mag=self.sensor.getSensor(type_="round")
-                self.moveX(0.5,1)
+                self.moveX(0.5,-1)
                 a_.append(mag)
-            self.moveX(steps*0.5,-1) #move x back
+            self.moveX(steps*0.5,1) #move x back
             a.append(a_)
-            self.moveZ(1,1) #move back
+            self.moveZ(1,-1) #move back
         return np.array(a)
     
