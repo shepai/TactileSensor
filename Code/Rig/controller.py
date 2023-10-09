@@ -73,7 +73,8 @@ class Board:
         self.COM.close()
     def getWeight(self):
         return float(self.COM.exec('get_pressure()').decode("utf-8").replace("\r\n",""))
-
+    def unclick(self):
+        self.COM.exec_raw_no_follow('b.unclick()')#.decode("utf-8").replace("/r/n","")
 class experiment:
     def __init__(self,sensor):
         self.sensor=sensor
@@ -85,17 +86,16 @@ class experiment:
         self.control=Board()
         self.control.autoConnect(path) #autoconnect and run file
 
-    def moveTillTouch(self,threshold=65319):
+    def moveTillTouch(self,threshold=300):
         touched=False
         #get moving
         for i in range(100):
             s=self.sensor.getSensor(type_="round")
+        t1=time.time()
         while not touched:
             s=self.sensor.getSensor(type_="round")
-            #print(np.average(s),self.control.getWeight())
             self.control.moveZ(1)
-            #print(self.control.getWeight())
-            if self.control.getWeight()<threshold: touched=True
+            if time.time()-t1>5: touched=True #np.average(s)>=threshold or 
         print("Touching surface")
     def moveZ(self,cm,dir): #dir must be 1 or -1
         assert dir==1 or dir==-1, "Incorrect direction, must be 1 or -1"
@@ -125,17 +125,18 @@ class experiment:
         return np.array(a),np.array(d)
     def direction(self,trials,steps):
         a=[]
-        self.moveZ(1,-1) #move back
+        #self.moveZ(0.5,-1) #move back
+        self.control.unclick()
         for i in range(0, trials):
             #print("depth:",i)
-            self.moveTillTouch() #be touching the platform
+            self.moveTillTouch()
             a_=[]
-            for i in range(steps):
+            for j in range(steps):
                 mag=self.sensor.getSensor(type_="round")
-                self.moveX(0.5,-1)
+                self.moveX(0.1,-1)
                 a_.append(mag)
-            self.moveX(steps*0.5,1) #move x back
+            self.moveX(steps*0.1,1) #move x back
             a.append(a_)
-            self.moveZ(1,-1) #move back
+            self.control.unclick()
         return np.array(a)
     
