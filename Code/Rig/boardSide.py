@@ -25,14 +25,14 @@ class Move:
                 self.board.step(2,direction,speed)
             elif not self.pushY.value(): #if touches side move backwards
                 while not self.pushY.value():
-                    self.board.step(5,"f",self.speed)
+                    self.board.step(2,"f",self.speed)
     def unclick(self):
         while not self.pushX.value():
             self.board.step(1,"r",100)
-        self.board.step(1,"r",100)
+        #self.board.step(1,"r",100)
         while not self.pushY.value():
             self.board.step(2,"f",100)
-        self.board.step(2,"f",100)
+        #self.board.step(2,"f",100)
     def moveX_dc(self,num,stopFunc=None):
         direction="f"
         if num<0:
