@@ -65,8 +65,8 @@ class Board:
                     time.sleep(1)
     def moveX(self,num):
         self.COM.exec_raw_no_follow('b.moveX('+str(num)+')')#.decode("utf-8").replace("/r/n","")
-    def moveZ(self,num):
-        self.COM.exec_raw_no_follow('b.moveZ('+str(num)+')')#.decode("utf-8").replace("/r/n","")
+    def moveZ(self,num,override=False):
+        self.COM.exec_raw_no_follow('b.moveZ('+str(num)+',overide='+str(override)+')')#.decode("utf-8").replace("/r/n","")
     def setSpeed(self,speed):
         self.COM.exec_raw_no_follow('b.speed='+str(speed))#.decode("utf-8").replace("/r/n","")
     def close(self):
@@ -95,7 +95,9 @@ class experiment:
         while not touched:
             s=self.sensor.getSensor(type_="round")
             self.control.moveZ(1)
-            if time.time()-t1>5: touched=True #np.average(s)>=threshold or 
+            if time.time()-t1>5: touched=True #np.average(s)>=threshold or
+        #print("Override")
+        self.control.moveZ(5,override=True) 
         print("Touching surface")
     def moveZ(self,cm,dir): #dir must be 1 or -1
         assert dir==1 or dir==-1, "Incorrect direction, must be 1 or -1"

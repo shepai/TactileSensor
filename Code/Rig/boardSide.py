@@ -9,23 +9,30 @@ class Move:
         self.board.motorOff(1)
         self.pushX=Pin(4 , Pin.IN, Pin.PULL_UP)
         self.pushY=Pin(3 , Pin.IN, Pin.PULL_UP)
-    def moveZ(self,num,speed=40):
+    def moveZ(self,num,overide=False,speed=40):
         direction="f"
         if num<0:
             direction="r"
         for step in range(abs(num)):
-            if self.pushX.value() or direction=="r":
+            if self.pushX.value() or overide or direction=="r":
                 self.board.step(1,direction,speed)
     def moveX(self,num,speed=40):
         direction="f"
         if num<0:
             direction="r"
         for step in range(abs(num)):
-            if self.pushY.value() or direction=="r":
+            if self.pushY.value() or direction=="f":
                 self.board.step(2,direction,speed)
+            elif not self.pushY.value(): #if touches side move backwards
+                while not self.pushY.value():
+                    self.board.step(5,"f",self.speed)
     def unclick(self):
         while not self.pushX.value():
-            self.board.step(1,"r",self.speed)
+            self.board.step(1,"r",100)
+        self.board.step(1,"r",100)
+        while not self.pushY.value():
+            self.board.step(2,"f",100)
+        self.board.step(2,"f",100)
     def moveX_dc(self,num,stopFunc=None):
         direction="f"
         if num<0:
