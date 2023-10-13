@@ -98,9 +98,9 @@ class Board:
         elif type_=="round": #if round type return data
             pass
         return grid
-    def ReadAnalog(self,pin=28):
+    def ReadAnalog(self,pin=28,alpha=0.1):
         self.COM.exec_raw_no_follow("adc_pin = machine.Pin("+str(pin)+")")
-        self.COM.exec_raw_no_follow("adc = machine.ADC(adc_pin)\nalpha = 0.1\nfiltered_value = adc.read_u16()")
+        self.COM.exec_raw_no_follow("adc = machine.ADC(adc_pin)\nalpha = "+str(alpha)+"\nfiltered_value = adc.read_u16()")
         self.COM.exec_raw_no_follow("""# Read the raw sensor value
 sensor_value = adc.read_u16()
 
