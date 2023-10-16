@@ -22,7 +22,8 @@ while True:
         round[i]=B.ReadAnalog()
     i+=1
     plt.cla()
-    plt.plot([k/5 for k in range(len(round))],round,label="sensor ")
+    val=(round-np.min(round))/(np.max(round)-np.min(round)) #normalise
+    plt.plot([k/5 for k in range(len(round))],val,label="sensor ")
     plt.legend(loc="lower left")
     plt.title("Filtered round sensor")
     plt.xlabel("Time (seconds)")
