@@ -30,7 +30,14 @@ class gonk:
         cs = board.GP15
         sd = sdcardio.SDCard(spi, cs)
         vfs = storage.VfsFat(sd)
-        storage.mount(vfs, '/sd')
+        self.sd=1
+        try:
+            storage.mount(vfs, '/sd')
+            with open("/sd/test.csv", "w") as f:
+                f.write("test")
+        except:
+            print("No Sd card")
+            self.sd=0
         self.audio = AudioOut(board.GP18)
         #setup eye
         self.timer=time.time()
@@ -61,7 +68,7 @@ class gonk:
             print("No mpu6050 detected")
             self.mpu=0
         #setup servos
-        pins=[board.GP19,board.GP20,board.GP21,board.GP22]
+        pins=[board.GP17,board.GP20,board.GP21,board.GP22]
         self.servos=[servo.Servo(pwmio.PWMOut(pins[i], frequency=50),min_pulse=750, max_pulse=2250) for i in range(len(pins))]
     def move(self,servo,angle):
         assert servo>=0 and servo<len(self.servos),"Incorrect index"
@@ -75,6 +82,11 @@ class gonk:
                     self.display.show()
 
                     time.sleep(self.DELAY)
+    def writeData(self,name,gyro,pressure):
+        if self.mpu and self.sd:
+            with open("/sd/"+str(name), "a") as f:
+                f.write(str(gyro[0])+","+str(gyro[1])+","+str(gyro[2])+","+pressure+"\n")
+        else: print("Cannot save as sensor or storage device missing")
     def blink(self):
         #blink the eye
         test=self.eye.copy()
@@ -115,3 +127,4 @@ droid.blink()
 droid.playSound()
 print(droid.getGyro())
 print("Temperature:",droid.temp)
+droid.writeData("test.csv",droid.getGyro(),"example")
