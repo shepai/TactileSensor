@@ -9,6 +9,8 @@ import sdcardio
 import storage
 import adafruit_mpu6050
 import adafruit_ht16k33.matrix
+import digitalio
+import analogio
 from audiomp3 import MP3Decoder
 try:
     from audioio import AudioOut
@@ -20,6 +22,7 @@ except ImportError:
 import pwmio
 from adafruit_motor import servo
 import time
+import ulab.numpy as np
 
 class gonk:
     def __init__(self):
@@ -70,6 +73,37 @@ class gonk:
         #setup servos
         pins=[board.GP17,board.GP20,board.GP21,board.GP22]
         self.servos=[servo.Servo(pwmio.PWMOut(pins[i], frequency=50),min_pulse=750, max_pulse=2250) for i in range(len(pins))]
+        #setup feet
+        self.S0 = digitalio.DigitalInOut(board.GP0)
+        self.S0.direction = digitalio.Direction.OUTPUT
+        self.S1 = digitalio.DigitalInOut(board.GP1)
+        self.S1.direction = digitalio.Direction.OUTPUT
+        self.S2 = digitalio.DigitalInOut(board.GP3)
+        self.S2.direction = digitalio.Direction.OUTPUT
+        self.S3 = digitalio.DigitalInOut(board.GP4)
+        self.S3.direction = digitalio.Direction.OUTPUT
+        self.pin = analogio.AnalogIn(board.GP26)
+        #bandpass filter
+        self.LP=self.getFeet()
+        self.HP=self.getFeet()
+    def getFeet(self):
+        def select_channel(channel):
+            channel=f'{channel:04b}'
+            self.S0.value=int(channel[3])
+            self.S1.value=int(channel[2])
+            self.S2.value=int(channel[1])
+            self.S3.value=int(channel[0])
+        a=[]
+        for i in range(10):
+            select_channel(i)
+            a.append(self.pin.value)
+        return np.array(a)
+    def filter(self,array,alpha=0.2):
+        low_pass=(1-alpha)*self.LP +(alpha*array)
+        highpass=alpha*self.HP + alpha*(low_pass-self.LP)
+        self.LP=low_pass.copy()
+        self.HP=highpass.copy()
+        return highpass
     def move(self,servo,angle):
         assert servo>=0 and servo<len(self.servos),"Incorrect index"
         self.servos[servo].angle=angle
@@ -122,6 +156,8 @@ class gonk:
         while time.monotonic() - t < 3:
             pass
 droid=gonk()
+for i in range(10):
+    print(droid.filter(droid.getFeet()))
 droid.display_face(droid.eye)
 droid.blink()
 droid.playSound()
