@@ -117,9 +117,13 @@ class gonk:
 
                     time.sleep(self.DELAY)
     def writeData(self,name,gyro,pressure):
+        #pressure to string
+        s=""
+        for i in range(len(pressure)):
+            s+=str(pressure[i])+","
         if self.mpu and self.sd:
             with open("/sd/"+str(name), "a") as f:
-                f.write(str(gyro[0])+","+str(gyro[1])+","+str(gyro[2])+","+pressure+"\n")
+                f.write(str(gyro[0])+","+str(gyro[1])+","+str(gyro[2])+","+pressure[:-1]+"\n")
         else: print("Cannot save as sensor or storage device missing")
     def blink(self):
         #blink the eye
@@ -156,11 +160,14 @@ class gonk:
         while time.monotonic() - t < 3:
             pass
 droid=gonk()
-for i in range(10):
-    print(droid.filter(droid.getFeet()))
+
 droid.display_face(droid.eye)
 droid.blink()
-droid.playSound()
+#droid.playSound()
 print(droid.getGyro())
 print("Temperature:",droid.temp)
-droid.writeData("test.csv",droid.getGyro(),"example")
+
+for i in range(10):
+    d=droid.filter(droid.getFeet())
+    droid.writeData("test.csv",droid.getGyro(),d)
+
