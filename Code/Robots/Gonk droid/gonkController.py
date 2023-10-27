@@ -132,8 +132,12 @@ class gonk:
                     self.display.show()
 
                     time.sleep(self.DELAY)
-    def writeData(self,name,gyro,pressure):
+    def writeData(self,name,gyro=None,pressure=None):
         #pressure to string
+        if type(gyro)==type(None):
+            gyro=self.getGyro()
+        if type(pressure)==type(None):
+            pressure=self.filter(self.getFeet())
         s=""
         for i in range(len(pressure)):
             s+=str(pressure[i])+","
@@ -175,5 +179,8 @@ class gonk:
         t = time.monotonic()
         while time.monotonic() - t < 3:
             pass
-
-
+    def createFile(self,name,keys):
+        with open("/sd/"+str(name), "w") as f:
+            for j in range(len(keys)-1):
+                f.write(keys[j]+",")
+            f.write(keys[-1]+"\n")
