@@ -37,7 +37,7 @@ class gonk:
         try:
             storage.mount(vfs, '/sd')
             with open("/sd/test.csv", "w") as f:
-                f.write("test")
+                f.write("")
         except:
             print("No Sd card")
             self.sd=0
@@ -74,19 +74,34 @@ class gonk:
         pins=[board.GP17,board.GP20,board.GP21,board.GP22]
         self.servos=[servo.Servo(pwmio.PWMOut(pins[i], frequency=50),min_pulse=750, max_pulse=2250) for i in range(len(pins))]
         #setup feet
-        self.S0 = digitalio.DigitalInOut(board.GP0)
+        self.S0 = digitalio.DigitalInOut(board.GP4)
         self.S0.direction = digitalio.Direction.OUTPUT
-        self.S1 = digitalio.DigitalInOut(board.GP1)
+        self.S1 = digitalio.DigitalInOut(board.GP3)
         self.S1.direction = digitalio.Direction.OUTPUT
-        self.S2 = digitalio.DigitalInOut(board.GP3)
+        self.S2 = digitalio.DigitalInOut(board.GP1)
         self.S2.direction = digitalio.Direction.OUTPUT
-        self.S3 = digitalio.DigitalInOut(board.GP4)
+        self.S3 = digitalio.DigitalInOut(board.GP0)
         self.S3.direction = digitalio.Direction.OUTPUT
         self.pin = analogio.AnalogIn(board.GP26)
         #bandpass filter
         self.LP=self.getFeet()
         self.HP=self.getFeet()
-    def getFeet(self):
+    def reset(self):
+        angles=[100,50,170,100]
+        for i in range(len(self.servos)):
+            self.servos[i].angle=angles[i]
+    def move(self,servo,angle,step=2):
+        assert servo>=0 and servo<len(self.servos),"Incorrect index"
+        if angle<self.servos[servo].angle:
+            for i in reversed(range(angle,int(self.servos[servo].angle),step)):
+                self.servos[servo].angle-=step
+                time.sleep(0.01)
+        else:
+            for i in range(int(self.servos[servo].angle),angle,step):
+                self.servos[servo].angle+=step
+                time.sleep(0.01)
+        self.servos[servo].angle=angle
+    def getFeet(self,ignore=[2,3,6,7]):
         def select_channel(channel):
             channel=f'{channel:04b}'
             self.S0.value=int(channel[3])
@@ -96,9 +111,10 @@ class gonk:
         a=[]
         for i in range(10):
             select_channel(i)
-            a.append(self.pin.value)
+            if i not in ignore:
+                a.append(self.pin.value)
         return np.array(a)
-    def filter(self,array,alpha=0.2):
+    def filter(self,array,alpha=0.3):
         low_pass=(1-alpha)*self.LP +(alpha*array)
         highpass=alpha*self.HP + alpha*(low_pass-self.LP)
         self.LP=low_pass.copy()
@@ -123,7 +139,7 @@ class gonk:
             s+=str(pressure[i])+","
         if self.mpu and self.sd:
             with open("/sd/"+str(name), "a") as f:
-                f.write(str(gyro[0])+","+str(gyro[1])+","+str(gyro[2])+","+pressure[:-1]+"\n")
+                f.write(str(gyro[0])+","+str(gyro[1])+","+str(gyro[2])+","+s[:-1]+"\n")
         else: print("Cannot save as sensor or storage device missing")
     def blink(self):
         #blink the eye
@@ -159,15 +175,5 @@ class gonk:
         t = time.monotonic()
         while time.monotonic() - t < 3:
             pass
-droid=gonk()
 
-droid.display_face(droid.eye)
-droid.blink()
-#droid.playSound()
-print(droid.getGyro())
-print("Temperature:",droid.temp)
-
-for i in range(10):
-    d=droid.filter(droid.getFeet())
-    droid.writeData("test.csv",droid.getGyro(),d)
 
