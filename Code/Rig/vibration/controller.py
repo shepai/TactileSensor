@@ -184,7 +184,7 @@ class Sensor:
                 res=self.serial_ports()
                 print("ports:",res)
                 self.connect(res[0])
-                self.runFile(file) #C:/Users/dexte/OneDrive/Documents/GitHub/TactileSensor/Code/TactileSensor/boardSide.py
+                self.runFile(file) 
                 COM=res[0]
             except IndexError:
                 time.sleep(1)
@@ -212,3 +212,6 @@ class Sensor:
             except (OSError, serial.SerialException):
                 pass
         return result
+    def getSensor(self,alpha=0.2):
+        data=self.COM.exec('gather(alpha='+str(alpha)+')').decode("utf-8").replace("\r\n","").replace("[","").replace("]","").replace(" ","")
+        grid=float(data)
