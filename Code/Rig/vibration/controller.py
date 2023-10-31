@@ -95,7 +95,7 @@ class experiment:
         while not touched:
             s=self.sensor.getSensor()
             self.control.moveZ(1)
-            if time.time()-t1>5: touched=True #np.average(s)>=threshold or
+            if time.time()-t1>10: touched=True #np.average(s)>=threshold or
         #print("Override")
         self.control.moveZ(5,override=True) 
         print("Touching surface")
