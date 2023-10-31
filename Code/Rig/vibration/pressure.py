@@ -9,24 +9,22 @@ B=controller.Sensor()
 #get serial boards and connect to first one
 B.autoConnect()
 
-input("Press enter once you have added your rig device")
+#input("Press enter once you have added your rig device")
 
 exp=controller.experiment(B)
 exp.moveZ(0.1,-1)
 CM=1
 ST=0.1
-samples=1
-data=np.zeros((samples,len(np.arange(0, CM, ST)),10))
-weights=np.zeros((samples,len(np.arange(0, CM, ST))))
+samples=100
+data=np.zeros((samples,len(np.arange(0, CM, ST)),1))
 t1=time.time()
 for i in range(samples):
     print("Complete:",round((i/samples)*100,1),"%","Time taken:",round((time.time()-t1)/60,1),"minutes")
-    sensor,weight=exp.pressures(CM,ST)
+    sensor=exp.pressures(CM,ST)
     data[i]=sensor
-    weights[i]=weight
     exp.moveZ(1,1)
 
-    np.save("C:/Users/dexte/Documents/GitHub/TactileSensor/Code/Data collection/pressures/vibePressVals_3",data)
+    np.save("C:/Users/dexte/Documents/GitHub/TactileSensor/Code/Data collection/pressures/vibePressVals_1",data)
     #np.save("C:/Users/dexte/Documents/GitHub/TactileSensor/Code/Data collection/pressures/pressureWeights_3",weights)
 
 print("Exiting...")

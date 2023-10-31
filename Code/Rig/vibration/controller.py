@@ -66,7 +66,10 @@ class Board:
     def moveX(self,num):
         self.COM.exec_raw_no_follow('b.moveX('+str(num)+')')#.decode("utf-8").replace("/r/n","")
     def moveZ(self,num,override=False):
-        self.COM.exec_raw_no_follow('b.moveZ('+str(num)+',overide='+str(override)+')')#.decode("utf-8").replace("/r/n","")
+        try:
+            self.COM.exec_raw_no_follow('b.moveZ('+str(num)+',overide='+str(override)+')')#.decode("utf-8").replace("/r/n","")
+        except pyboard.PyboardError:
+            print("Failed to move")
     def setSpeed(self,speed):
         self.COM.exec_raw_no_follow('b.speed='+str(speed))#.decode("utf-8").replace("/r/n","")
     def close(self):
@@ -111,7 +114,6 @@ class experiment:
             self.control.moveX(1*dir) #move up
     def pressures(self,cm_samples=2,step=0.5):
         a=[]
-        d=[]
         self.moveTillTouch() #be touching the platform
         for i in np.arange(0, cm_samples, step):
             #print("depth:",i)
@@ -121,10 +123,9 @@ class experiment:
             time.sleep(1)
             data=self.sensor.getSensor()
             a.append(data)
-            d.append(self.control.getWeight())
             self.moveZ(i,-1) #move back
         self.moveZ(1,1) #move back
-        return np.array(a),np.array(d)
+        return np.array(a)
     def direction(self,trials,steps):
         a=[]
         #self.moveZ(0.5,-1) #move back
