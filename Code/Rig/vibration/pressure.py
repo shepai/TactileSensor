@@ -17,13 +17,14 @@ CM=1
 ST=0.1
 samples=100
 data=np.zeros((samples,len(np.arange(0, CM, ST)),1))
+print(data.shape)
 t1=time.time()
 for i in range(samples):
     print("Complete:",round((i/samples)*100,1),"%","Time taken:",round((time.time()-t1)/60,1),"minutes")
     sensor=exp.pressures(CM,ST)
-    data[i]=sensor
+    data[i]=sensor.reshape((len(np.arange(0, CM, ST)),1))
     exp.moveZ(1,1)
-
+    print(sensor)
     np.save("C:/Users/dexte/Documents/GitHub/TactileSensor/Code/Data collection/pressures/vibePressVals_1",data)
     #np.save("C:/Users/dexte/Documents/GitHub/TactileSensor/Code/Data collection/pressures/pressureWeights_3",weights)
 

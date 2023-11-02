@@ -216,3 +216,4 @@ class Sensor:
     def getSensor(self,alpha=0.2):
         data=self.COM.exec('gather(alpha='+str(alpha)+')').decode("utf-8").replace("\r\n","").replace("[","").replace("]","").replace(" ","")
         grid=float(data)
+        return grid
