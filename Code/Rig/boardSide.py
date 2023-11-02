@@ -7,8 +7,8 @@ class Move:
         self.board=PicoRobotics.KitronikPicoRobotics()
         self.speed=speed
         self.board.motorOff(1)
-        self.pushX=Pin(32 , Pin.IN, Pin.PULL_UP)
-        self.pushY=Pin(31 , Pin.IN, Pin.PULL_UP)
+        self.pushX=Pin(4 , Pin.IN, Pin.PULL_UP)
+        self.pushY=Pin(5 , Pin.IN, Pin.PULL_UP)
     def moveZ(self,num,overide=False,speed=40):
         direction="f"
         if num<0:
