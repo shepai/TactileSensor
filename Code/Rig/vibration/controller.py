@@ -126,29 +126,26 @@ class experiment:
             self.moveZ(i,-1) #move back
         self.moveZ(1,1) #move back
         return np.array(a)
-    def direction(self,trials,steps):
-        a=[]
+    def direction(self,steps):
         #self.moveZ(0.5,-1) #move back
         self.control.unclick()
-        for i in range(0, trials):
-            #print("depth:",i)
-            a_prime=[]
-            self.moveTillTouch()
-            a_=[]
-            for j in range(steps):
-                mag=self.sensor.getSensor()
-                self.moveX(0.1,-1)
-                a_.append(mag)
-            a_prime.append(a_)
-            a_=[]
-            for j in range(steps):
-                mag=self.sensor.getSensor()
-                self.moveX(0.1,1)
-                a_.append(mag)
-            a_prime.append(a_)
-            a.append(a_prime)
-            self.control.unclick()
-        return np.array(a)
+        #print("depth:",i)
+        a_prime=[]
+        self.moveTillTouch()
+        a_=[]
+        for j in range(steps):
+            mag=self.sensor.getSensor()
+            self.moveX(0.1,-1)
+            a_.append(mag)
+        a_prime.append(a_)
+        a_=[]
+        for j in range(steps):
+            mag=self.sensor.getSensor()
+            self.moveX(0.1,1)
+            a_.append(mag)
+        a_prime.append(a_)
+        self.control.unclick()
+        return np.array(a_prime)
     
 class Sensor:
     def __init__(self):
