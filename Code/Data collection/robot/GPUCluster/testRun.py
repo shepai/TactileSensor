@@ -130,5 +130,5 @@ def train(X_train,Y_train,X_test,Y_test,num_epochs = 100,learning_rate = 0.001):
 
 lossTrain,lossTest=train(X_train,Y_train,X_test,Y_test,num_epochs = 1000,learning_rate = 0.01)
 
-np.save(lossTrain,path+"GPUCluster/data/train_loss")
-np.save(lossTest,path+"GPUCluster/data/test_loss")
+np.save(path+"GPUCluster/data/train_loss",lossTrain)
+np.save(path+"GPUCluster/data/test_loss",lossTest)
