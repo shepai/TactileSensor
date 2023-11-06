@@ -111,7 +111,7 @@ def train(X_train,Y_train,X_test,Y_test,num_epochs = 100,learning_rate = 0.001):
 
         total_loss = loss.item()
         history_train.append(total_loss)
-        print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {total_loss:.4f}")
+        #print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {total_loss:.4f}")
 
         # Validation
         lstm_model.eval()
@@ -122,15 +122,16 @@ def train(X_train,Y_train,X_test,Y_test,num_epochs = 100,learning_rate = 0.001):
             val_loss = criterion(outputs, Y_test)
             total_val_loss = val_loss.item()
 
-            print(f"Validation Loss: {total_val_loss:.4f}")
+            #print(f"Validation Loss: {total_val_loss:.4f}")
             history_test.append(total_val_loss)
     # Save the trained model
     torch.save(lstm_model.state_dict(), path+"GPUCluster/data/"+"lstm_model.pth")
     return np.array(history_train), np.array(history_test)
 
 
-for t in range(1,20):
+for t in range(20,50):
     #prep data
+    print(t)
     X_,y_=gen_temporal_data_2(X,y,t)
     #reduction
     X_=(X_-np.average(X_))/np.std(X_)
