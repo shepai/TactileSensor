@@ -135,7 +135,7 @@ class gonk:
     def writeData(self,name,gyro=None,pressure=None):
         #pressure to string
         if type(gyro)==type(None):
-            gyro=self.getGyro()
+            gyro=self.getAcc()
         if type(pressure)==type(None):
             pressure=self.filter(self.getFeet())
         s=""
@@ -168,9 +168,13 @@ class gonk:
     def getGyro(self):
         if self.mpu:
             gyro=self.mpu_.gyro
-            acc=self.mpu_.acceleration
             self.temp=self.mpu_.temperature
             return gyro
+    def getAcc(self):
+        if self.mpu:
+            acc=self.mpu_.acceleration
+            self.temp=self.mpu_.temperature
+            return acc
     def playSound(self):
         mp3 = open("gonk-droid-sound.mp3", "rb")
         decoder = MP3Decoder(mp3)
