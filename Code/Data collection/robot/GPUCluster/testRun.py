@@ -125,7 +125,10 @@ def train(X_train,Y_train,X_test,Y_test,num_epochs = 100,learning_rate = 0.001):
             print(f"Validation Loss: {total_val_loss:.4f}")
             history_test.append(total_val_loss)
     # Save the trained model
-    #torch.save(lstm_model.state_dict(), "lstm_model.pth")
-    return history_train, history_test
+    torch.save(lstm_model.state_dict(), path+"GPUCluster/data/"+"lstm_model.pth")
+    return np.array(history_train), np.array(history_test)
 
 lossTrain,lossTest=train(X_train,Y_train,X_test,Y_test,num_epochs = 1000,learning_rate = 0.01)
+
+np.save(lossTrain,path+"GPUCluster/data/train_loss")
+np.save(lossTest,path+"GPUCluster/data/test_loss")
