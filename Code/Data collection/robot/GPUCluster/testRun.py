@@ -72,7 +72,7 @@ class LSTMModel(nn.Module):
         return out
     
 #prep data
-X_,y_=gen_temporal_data_2(X,y,25)
+X_,y_=gen_temporal_data_2(X,y,15)
 #reduction
 X_=(X_-np.average(X_))/np.std(X_)
 y=(y-np.average(y))/np.std(y)
