@@ -72,7 +72,7 @@ class LSTMModel(nn.Module):
         return out
     
 #prep data
-X_,y_=gen_temporal_data_2(X,y,5)
+X_,y_=gen_temporal_data_2(X,y,25)
 #reduction
 X_=(X_-np.average(X_))/np.std(X_)
 y=(y-np.average(y))/np.std(y)
@@ -128,7 +128,7 @@ def train(X_train,Y_train,X_test,Y_test,num_epochs = 100,learning_rate = 0.001):
     torch.save(lstm_model.state_dict(), path+"GPUCluster/data/"+"lstm_model.pth")
     return np.array(history_train), np.array(history_test)
 
-lossTrain,lossTest=train(X_train,Y_train,X_test,Y_test,num_epochs = 1000,learning_rate = 0.01)
+lossTrain,lossTest=train(X_train,Y_train,X_test,Y_test,num_epochs = 10000,learning_rate = 0.001)
 
 np.save(path+"GPUCluster/data/train_loss",lossTrain)
 np.save(path+"GPUCluster/data/test_loss",lossTest)
