@@ -31,10 +31,10 @@ class gonk:
         #setup sd card
         spi = busio.SPI(board.GP10, MOSI=board.GP11, MISO=board.GP12)
         cs = board.GP15
-        sd = sdcardio.SDCard(spi, cs)
-        vfs = storage.VfsFat(sd)
         self.sd=1
         try:
+            sd = sdcardio.SDCard(spi, cs)
+            vfs = storage.VfsFat(sd)
             storage.mount(vfs, '/sd')
             with open("/sd/test.csv", "w") as f:
                 f.write("")
@@ -135,7 +135,7 @@ class gonk:
     def writeData(self,name,gyro=None,pressure=None):
         #pressure to string
         if type(gyro)==type(None):
-            gyro=self.getAcc()
+            gyro=self.getGyro()
         if type(pressure)==type(None):
             pressure=self.filter(self.getFeet())
         s=""
@@ -168,10 +168,6 @@ class gonk:
     def getGyro(self):
         if self.mpu:
             gyro=self.mpu_.gyro
-            self.temp=self.mpu_.temperature
-            return gyro
-    def getAcc(self):
-        if self.mpu:
             acc=self.mpu_.acceleration
             self.temp=self.mpu_.temperature
             return acc
