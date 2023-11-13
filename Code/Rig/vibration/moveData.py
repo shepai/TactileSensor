@@ -17,10 +17,11 @@ samples=100
 data=np.zeros((samples,2,steps))
 t1=time.time()
 print(data.shape)
+exp.control.unclick()
 try:
     for i in range(samples):
         print("Complete:",round((i/samples)*100,1),"%","Time taken:",round((time.time()-t1)/60,1),"minutes")
-        sensor=exp.direction(steps)
+        sensor=exp.speed(steps)
         data[i]=sensor
         np.save("C:/Users/dexte/Documents/GitHub/TactileSensor/Code/Data collection/pressures/speeds",data)
 except KeyboardInterrupt:
