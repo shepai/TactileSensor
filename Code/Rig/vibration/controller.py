@@ -153,21 +153,19 @@ class experiment:
         for i in range(0, trials):
             #print("depth:",i)
             a_prime=[]
-            self.moveTillTouch()
             a_=[]
             for j in range(steps):
                 mag=self.sensor.getSensor()
-                self.moveX(0.1,-1)
+                self.control.moveX(26,speed=(100/steps)*(j+1))
                 a_.append(mag)
             a_prime.append(a_)
             a_=[]
             for j in range(steps):
                 mag=self.sensor.getSensor()
-                self.moveX(0.1,1)
+                self.control.moveX(26,speed=(100/steps)*(j+1))
                 a_.append(mag)
             a_prime.append(a_)
             a.append(a_prime)
-            self.control.unclick()
         return np.array(a)
     
 class Sensor:
