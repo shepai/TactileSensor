@@ -64,10 +64,11 @@ class Board:
                 except IndexError:
                     time.sleep(1)
     def moveX(self,num,speed=40):
+        print('b.moveX('+str(num)+',speed='+str(speed)+')')
         self.COM.exec_raw_no_follow('b.moveX('+str(num)+',speed='+str(speed)+')')#.decode("utf-8").replace("/r/n","")
     def moveZ(self,num,speed=40,override=False):
         try:
-            self.COM.exec_raw_no_follow('b.moveZ('+str(num)+',speed='+str(speed)+'),overide='+str(override)+')')#.decode("utf-8").replace("/r/n","")
+            self.COM.exec_raw_no_follow('b.moveZ('+str(num)+',speed='+str(speed)+',overide='+str(override)+')')#.decode("utf-8").replace("/r/n","")
         except pyboard.PyboardError:
             print("Failed to move")
     def setSpeed(self,speed):
