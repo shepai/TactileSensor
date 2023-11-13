@@ -63,11 +63,11 @@ class Board:
                     COM=res[0]
                 except IndexError:
                     time.sleep(1)
-    def moveX(self,num):
-        self.COM.exec_raw_no_follow('b.moveX('+str(num)+')')#.decode("utf-8").replace("/r/n","")
-    def moveZ(self,num,override=False):
+    def moveX(self,num,speed=40):
+        self.COM.exec_raw_no_follow('b.moveX('+str(num)+',speed='+str(speed)+')')#.decode("utf-8").replace("/r/n","")
+    def moveZ(self,num,speed=40,override=False):
         try:
-            self.COM.exec_raw_no_follow('b.moveZ('+str(num)+',overide='+str(override)+')')#.decode("utf-8").replace("/r/n","")
+            self.COM.exec_raw_no_follow('b.moveZ('+str(num)+',speed='+str(speed)+'),overide='+str(override)+')')#.decode("utf-8").replace("/r/n","")
         except pyboard.PyboardError:
             print("Failed to move")
     def setSpeed(self,speed):
@@ -146,6 +146,29 @@ class experiment:
         a_prime.append(a_)
         self.control.unclick()
         return np.array(a_prime)
+    def speed(self,trials,steps):
+        a=[]
+        #self.moveZ(0.5,-1) #move back
+        self.control.unclick()
+        for i in range(0, trials):
+            #print("depth:",i)
+            a_prime=[]
+            self.moveTillTouch()
+            a_=[]
+            for j in range(steps):
+                mag=self.sensor.getSensor()
+                self.moveX(0.1,-1)
+                a_.append(mag)
+            a_prime.append(a_)
+            a_=[]
+            for j in range(steps):
+                mag=self.sensor.getSensor()
+                self.moveX(0.1,1)
+                a_.append(mag)
+            a_prime.append(a_)
+            a.append(a_prime)
+            self.control.unclick()
+        return np.array(a)
     
 class Sensor:
     def __init__(self):
@@ -213,4 +236,3 @@ class Sensor:
     def getSensor(self,alpha=0.2):
         data=self.COM.exec('gather(alpha='+str(alpha)+')').decode("utf-8").replace("\r\n","").replace("[","").replace("]","").replace(" ","")
         grid=float(data)
-        return grid
