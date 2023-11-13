@@ -64,7 +64,6 @@ class Board:
                 except IndexError:
                     time.sleep(1)
     def moveX(self,num,speed=40):
-        print('b.moveX('+str(num)+',speed='+str(speed)+')')
         self.COM.exec_raw_no_follow('b.moveX('+str(num)+',speed='+str(speed)+')')#.decode("utf-8").replace("/r/n","")
     def moveZ(self,num,speed=40,override=False):
         try:
@@ -147,27 +146,24 @@ class experiment:
         a_prime.append(a_)
         self.control.unclick()
         return np.array(a_prime)
-    def speed(self,trials,steps):
-        a=[]
-        #self.moveZ(0.5,-1) #move back
-        self.control.unclick()
-        for i in range(0, trials):
-            #print("depth:",i)
-            a_prime=[]
-            a_=[]
-            for j in range(steps):
-                mag=self.sensor.getSensor()
-                self.control.moveX(26,speed=(100/steps)*(j+1))
-                a_.append(mag)
-            a_prime.append(a_)
-            a_=[]
-            for j in range(steps):
-                mag=self.sensor.getSensor()
-                self.control.moveX(26,speed=(100/steps)*(j+1))
-                a_.append(mag)
-            a_prime.append(a_)
-            a.append(a_prime)
-        return np.array(a)
+    def speed(self,steps):
+        a_prime=[]
+        a_=[]
+        s=[10,20,30,40]
+        self.control.moveX(-5,speed=s[3])
+        for j in range(steps):
+            mag=self.sensor.getSensor()
+            self.control.moveX(1,speed=s[j])
+            a_.append(mag)
+        a_prime.append(a_)
+        a_=[]
+        for j in range(steps):
+            mag=self.sensor.getSensor()
+            self.control.moveX(-1,speed=s[j])
+            a_.append(mag)
+        a_prime.append(a_)
+        self.control.moveX(-10,speed=s[3])
+        return np.array(a_prime)
     
 class Sensor:
     def __init__(self):
