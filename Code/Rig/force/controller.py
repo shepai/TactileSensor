@@ -75,6 +75,8 @@ class Board:
         return float(self.COM.exec('get_pressure()').decode("utf-8").replace("\r\n",""))
     def unclick(self):
         self.COM.exec_raw_no_follow('b.unclick()')#.decode("utf-8").replace("/r/n","")
+    def calib(self):
+        self.COM.exec_raw_no_follow('b.moveTillCorner()')
 class experiment:
     def __init__(self,sensor):
         self.sensor=sensor
@@ -129,6 +131,8 @@ class experiment:
         a=[]
         #self.moveZ(0.5,-1) #move back
         self.control.unclick()
+        print("calib")
+        self.control.calib()
         for i in range(0, trials):
             #print("depth:",i)
             a_prime=[]
@@ -136,16 +140,17 @@ class experiment:
             a_=[]
             for j in range(steps):
                 mag=self.sensor.getSensor(type_="round")
-                self.moveX(0.1,-1)
+                self.moveX(1,-1)
                 a_.append(mag)
             a_prime.append(a_)
             a_=[]
             for j in range(steps):
                 mag=self.sensor.getSensor(type_="round")
-                self.moveX(0.1,1)
+                self.moveX(1,1)
                 a_.append(mag)
             a_prime.append(a_)
             a.append(a_prime)
             self.control.unclick()
+            self.control.calib()
         return np.array(a)
     

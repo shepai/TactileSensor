@@ -78,6 +78,8 @@ class Board:
         return float(self.COM.exec('get_pressure()').decode("utf-8").replace("\r\n",""))
     def unclick(self):
         self.COM.exec_raw_no_follow('b.unclick()')#.decode("utf-8").replace("/r/n","")
+    def calib(self):
+        self.COM.exec_raw_no_follow('moveTillCorner()')
 class experiment:
     def __init__(self,sensor):
         self.sensor=sensor

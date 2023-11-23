@@ -13,6 +13,8 @@ class Move:
         direction="f"
         if num<0:
             direction="r"
+        if num<1 and num>-1:
+            speed=speed*abs(num)
         for step in range(abs(num)):
             if self.pushX.value() or overide or direction=="r":
                 self.board.step(1,direction,speed)
@@ -20,12 +22,15 @@ class Move:
         direction="f"
         if num<0:
             direction="r"
+        if num<1 and num>-1:
+            speed=speed*abs(num)
         for step in range(abs(num)):
             if self.pushY.value() or direction=="f":
                 self.board.step(2,direction,speed)
             elif not self.pushY.value(): #if touches side move backwards
-                while not self.pushY.value():
-                    self.board.step(2,"f",self.speed)
+                #while not self.pushY.value():
+                    #self.board.step(2,"f",self.speed)
+                pass
     def unclick(self):
         while not self.pushX.value():
             self.board.step(1,"r",100)
@@ -49,7 +54,10 @@ class Move:
                 step+=1
             
         self.board.motorOff(1)
-
+    def moveTillCorner(self):
+        while self.pushY.value():
+            self.board.step(2,"r",50)
+            utime.sleep(0.1)
 
 pot = ADC(Pin(28))
 
@@ -63,6 +71,7 @@ def get_pressure():
         a.append(raw_value)
         utime.sleep(0.005)
     print(sum(a)//50)
+
 
 b=Move()
 """b.moveZ(-5)
