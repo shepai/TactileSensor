@@ -36,7 +36,7 @@ try:
     vfs = storage.VfsFat(sdcard)
     storage.mount(vfs, "/sd")
     with open("/sd/vibration.csv", "w") as file:  # Change the file path/name as needed
-        file.write("LED_no,s1,s2,s3,s4,t\n")
+        file.write("Rotation,LED_no,s1,s2,s3,s4,t\n")
     sd=True
 except OSError as e:
     print("No SD card",e)
@@ -50,7 +50,7 @@ def select_channel(channel):
 
 past=np.array([0,0,0,0])
 alpha=0.2
-
+rotation=0
 trials=10
 for k in range(trials):
     for i in range(num_pixels):
@@ -73,11 +73,13 @@ for k in range(trials):
                     s=""
                     for dat in a:
                         s+=str(dat)+","
-                    s=str(i)+","+s+str(t)+"\n"
+                    s=str(rotation)+","+str(i)+","+s+str(t)+"\n"
                     file.write(s)
         #remove pixel
         pixels[i]=(0,0,0)
         pixels.show()
+        if i==num_pixels-1:
+            rotation+=1
     
 
 if sd:
