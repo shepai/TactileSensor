@@ -143,7 +143,7 @@ class gonk:
             s+=str(pressure[i])+","
         if self.mpu and self.sd:
             with open("/sd/"+str(name), "a") as f:
-                f.write(str(time.time()-self.time)+str(gyro[0])+","+str(gyro[1])+","+str(gyro[2])+","+s[:-1]+"\n")
+                f.write(str(time.time()-self.time)+","+str(gyro[0])+","+str(gyro[1])+","+str(gyro[2])+","+s[:-1]+"\n")
         else: print("Cannot save as sensor or storage device missing")
     def blink(self):
         #blink the eye
