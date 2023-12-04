@@ -118,7 +118,7 @@ def getData(X,y,T):
     return X_train, X_test, Y_train, Y_test
 # Define your Autoencoder class
 class Autoencoder(nn.Module):
-    def __init__(self, input_size, latent_size):
+    def __init__(self, input_size, latent_size,output_size):
         super(Autoencoder, self).__init__()
         self.encoder = nn.Sequential(
             nn.Linear(input_size, latent_size),
@@ -127,8 +127,9 @@ class Autoencoder(nn.Module):
         self.decoder = nn.Sequential(
             nn.Linear(latent_size, input_size),
             nn.ReLU(),
-            nn.Linear(input_size, 3)  # Output size is 3
+            nn.Linear(input_size, input_size)  # Output size is 3
         )
+        #self.endlayer = nn.linear(input_size,output_size)
 
     def forward(self, x):
         encoded = self.encoder(x)
@@ -207,7 +208,7 @@ try:
 
             # Calculate the loss
             #loss_x = criterion(output, x)
-            loss = criterion(output, targets)  # Use only the first 3 elements for Y
+            loss = criterion(output, inputs)  # Use only the first 3 elements for Y
             #loss = loss_x + loss_y  # Combine both losses
             # Backpropagation and optimization
             optimizer.zero_grad()
@@ -219,6 +220,8 @@ try:
                 print(f"Epoch [{epoch + 1}/{num_epochs}], Loss: {loss.item():.4f}")
 except KeyboardInterrupt:
     pass
+      
+
 torch.save(autoencoder.state_dict(), path+"GPUCluster/data/"+"autoencoder_model.pth")
 
 np.save(path+"GPUCluster/data/train_loss",np.array(history))
