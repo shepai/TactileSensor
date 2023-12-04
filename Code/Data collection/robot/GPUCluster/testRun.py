@@ -49,7 +49,56 @@ def gen_temporal_data_2(X_,y_,T):
     y=temp_y
     return x, y
 
+def augmented_pattern(x,y):
+    isMod=False
+    while not isMod:
+        chunk_size=np.random.randint(5,100)
+        if len(x[0])%chunk_size==0:
+            isMod=True
+    repetitions=np.random.randint(3,5)
+    print(chunk_size)
+    randomized_x = []
+    randomized_y = []
+    
+    for idx, pattern in enumerate(x):
+        pattern_length = len(pattern)
+        num_chunks = pattern_length // chunk_size
+        
+        # Split pattern into chunks of size chunk_size
+        chunks = [pattern[i * chunk_size: (i + 1) * chunk_size] for i in range(num_chunks)]
+        
+        for _ in range(repetitions):
+            # Shuffle the chunks randomly
+            np.random.shuffle(chunks)
+            # Concatenate the shuffled chunks to create a new pattern
+            randomized_pattern = np.concatenate(chunks)
+            
+            # Store the randomized pattern and corresponding label
+            randomized_x.append(randomized_pattern)
+            randomized_y.append(y[idx])
+    
+    return np.array(randomized_x), np.array(randomized_y)
+def augmented_noise(X_):
+    X=X_.copy()
+    return X+np.random.normal(np.average(X),np.std(X)+1,X.shape)
 
+def getAugmentedData(X,y,T):
+    x,y=gen_temporal_data_2(X,y,T)
+    x1=augmented_noise(x)
+    x2,y1=augmented_pattern(x,y)
+    x=np.concatenate([x,x1,x2])
+    y=np.concatenate([y,y,y1])
+    #reduction
+    X_=(x-np.average(x))/np.std(x)
+    y=(y-np.average(y))/np.std(y)
+    #split
+    X_train, X_test, Y_train, Y_test = train_test_split(X_.astype(np.float32)[0:100], y_.astype(np.float32)[0:100], test_size=0.2, random_state=42)
+    X_train=torch.tensor(X_train).to(device)
+    X_test=torch.tensor(X_test).to(device)
+    Y_train=torch.tensor(Y_train).to(device)
+    Y_test=torch.tensor(Y_test).to(device)
+    return X_train, X_test, Y_train, Y_test
+    
 class LSTMModel(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers, output_size):
         super(LSTMModel, self).__init__()
@@ -71,13 +120,50 @@ class LSTMModel(nn.Module):
         out = self.fc(out[:, -1, :])
         return out
     
+path="~/TactileSensor/COde/Data collection/robot/GPUCluster/"
 #prep data
-X_,y_=gen_temporal_data_2(X,y,15)
-#reduction
-X_=(X_-np.average(X_))/np.std(X_)
-y=(y-np.average(y))/np.std(y)
+X,y=sort_data(path+"accmovementLeftFoot.csv")
+X1,y1=sort_data(path+"accmovementRightFoot.csv")
+X=np.concatenate((X,X1),axis=0)
+y=np.concatenate((y,y1),axis=0)
+X1,y1=sort_data(path+"accmovementRightFootCarpet.csv")
+X=np.concatenate((X,X1),axis=0)
+y=np.concatenate((y,y1),axis=0)
+X1,y1=sort_data(path+"accmovementLeftFootCarpet.csv")
+X=np.concatenate((X,X1),axis=0)
+y=np.concatenate((y,y1),axis=0)
+X1,y1=sort_data(path+"accmovementRightFootConrete.csv")
+X=np.concatenate((X,X1),axis=0)
+y=np.concatenate((y,y1),axis=0)
+X1,y1=sort_data(path+"accmovementLeftFootConrete.csv")
+X=np.concatenate((X,X1),axis=0)
+y=np.concatenate((y,y1),axis=0)
+X1,y1=sort_data(path+"accmovementRightFootOutdoor.csv")
+X=np.concatenate((X,X1),axis=0)
+y=np.concatenate((y,y1),axis=0)
+X1,y1=sort_data(path+"accmovementLeftFootOutdoor.csv")
+X=np.concatenate((X,X1),axis=0)
+y=np.concatenate((y,y1),axis=0)
+X1,y1=sort_data(path+"accmovementLeftFootCarpetDay2.csv")
+X=np.concatenate((X,X1),axis=0)
+y=np.concatenate((y,y1),axis=0)
+X1,y1=sort_data(path+"accmovementRightFootCarpetDay2.csv")
+X=np.concatenate((X,X1),axis=0)
+y=np.concatenate((y,y1),axis=0)
+X1,y1=sort_data(path+"accmovementLeftFootCarpetDay3.csv")
+X=np.concatenate((X,X1),axis=0)
+y=np.concatenate((y,y1),axis=0)
+X1,y1=sort_data(path+"accmovementRightFootCarpetDay3.csv")
+X=np.concatenate((X,X1),axis=0)
+y=np.concatenate((y,y1),axis=0)
+X1,y1=sort_data(path+"accmovementLeftFootDay4.csv")
+X=np.concatenate((X,X1),axis=0)
+y=np.concatenate((y,y1),axis=0)
+X1,y1=sort_data(path+"accmovementRightFootDay4.csv")
+X=np.concatenate((X,X1),axis=0)
+y=np.concatenate((y,y1),axis=0)
 #split
-X_train, X_test, Y_train, Y_test = train_test_split(X_.astype(np.float32), y_.astype(np.float32), test_size=0.2, random_state=42)
+X_train, X_test, Y_train, Y_test = getAugmentedData(X,y)
 X_train=torch.tensor(X_train).to(device)
 X_test=torch.tensor(X_test).to(device)
 Y_train=torch.tensor(Y_train).to(device)
