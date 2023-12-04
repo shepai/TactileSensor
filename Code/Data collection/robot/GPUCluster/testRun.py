@@ -91,7 +91,7 @@ def getAugmentedData(X,y,T):
     X_=(x-np.average(x))/np.std(x)
     y_=(y-np.average(y))/np.std(y)
     #split
-    X_train, X_test, Y_train, Y_test = train_test_split(X_.astype(np.float32)[0:100], y_.astype(np.float32)[0:100], test_size=0.2, random_state=42)
+    X_train, X_test, Y_train, Y_test = train_test_split(X_.astype(np.float32), y_.astype(np.float32), test_size=0.2, random_state=42)
     X_train=torch.tensor(X_train).to(device)
     X_test=torch.tensor(X_test).to(device)
     Y_train=torch.tensor(Y_train).to(device)
