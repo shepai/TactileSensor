@@ -17,7 +17,8 @@ if sys.platform.startswith('win'):
     path="C:/Users/dexte/Documents/GitHub/TactileSensor/Code/Data collection/robot/"
 
 torch.cuda.empty_cache() 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+#device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device=torch.device("cpu")
 print(torch.version.cuda)
 print("GPU:",torch.cuda.is_available())
 def sort_data(name,vibration=True,dir="all"):
@@ -194,6 +195,7 @@ batch_size=64
 
 # Training loop
 num_epochs = 10000
+history=[]
 for epoch in range(num_epochs):
     # Forward pass
     for i in range(0, len(X_train), batch_size):
@@ -210,7 +212,11 @@ for epoch in range(num_epochs):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-
+        history.append(loss.item())
         # Print progress
-        if epoch%100==0:
+    if epoch%100==0:
             print(f"Epoch [{epoch + 1}/{num_epochs}], Loss: {loss.item():.4f}")
+
+torch.save(autoencoder.state_dict(), path+"GPUCluster/data/"+"autoencoder_model.pth")
+
+np.save(path+"GPUCluster/data/train_loss",np.array(history))
