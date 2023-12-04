@@ -17,25 +17,24 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(torch.version.cuda)
 print("GPU:",torch.cuda.is_available())
 
-def sort_data(name):
+def sort_data(name,vibration=True,dir="all"):
     df = pd.read_csv(path+name)
-    x=np.array([df['s1'],df['s2'],df['s3'],df['s4'],df['s5'],df['s6']])
+    df=pd.DataFrame(df).fillna(0)
+    if vibration:
+        x=np.array([df['s1'],df['s2'],df['s3'],df['s4'],df['s5'],df['s6']])
+    else:
+        x=np.array([df['s1'],df['s2'],df['s5'],df['s6']])
+    if dir=="left":
+        x=np.array([df['s1'],df['s2'],df['s3']])
+    elif dir=="right":
+        x=np.array([df['s4'],df['s5'],df['s6']])
     x=x.T #transpose to have layers
     y=np.array([df['x'],df['y'],df['z']])
     y=y.T
-    print("X data:",x.shape,"\ny data:",y.shape)
+    nan_indices = np.where(np.isnan(y))
+    y[nan_indices]=0
+    print("X data:",x.shape,"/ny data:",y.shape)
     return x,y
-
-X,y=sort_data("movementLeftFoot.csv")
-X1,y1=sort_data("movementLeftFoot1.csv")
-X=np.concatenate((X,X1),axis=0)
-y=np.concatenate((y,y1),axis=0)
-X1,y1=sort_data("movementRightFoot.csv")
-X=np.concatenate((X,X1),axis=0)
-y=np.concatenate((y,y1),axis=0)
-X1,y1=sort_data("movementRightFoot1.csv")
-X=np.concatenate((X,X1),axis=0)
-y=np.concatenate((y,y1),axis=0)
 
 def gen_temporal_data_2(X_,y_,T):
     X=X_.copy()
