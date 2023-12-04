@@ -189,34 +189,38 @@ autoencoder = Autoencoder(input_size, latent_size).to(device)
 x = X_train.view(-1, input_size)
 
 # Define your optimizer and loss function
-optimizer = torch.optim.Adam(autoencoder.parameters(), lr=0.001)
+optimizer = torch.optim.SGD(autoencoder.parameters(), lr=0.001)
 criterion = nn.MSELoss()
 
 batch_size=64
 
 # Training loop
-num_epochs = 10000
+num_epochs = 1000
 history=[]
-for epoch in range(num_epochs):
-    # Forward pass
-    for i in range(0, len(X_train), batch_size):
-        inputs = x[i:i + batch_size]
-        targets = Y_train[i:i + batch_size]
+try:
+    for epoch in range(num_epochs):
+        # Forward pass
+        for i in range(0, len(X_train), batch_size):
+            inputs = x[i:i + batch_size]
+            targets = Y_train[i:i + batch_size]
 
-        output = autoencoder(inputs)
+            output = autoencoder(inputs)
 
-        # Calculate the loss
-        #loss_x = criterion(output, x)
-        loss = criterion(output, inputs)  # Use only the first 3 elements for Y
-        #loss = loss_x + loss_y  # Combine both losses
-        # Backpropagation and optimization
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-        history.append(loss.item())
-        # Print progress
-    if epoch%100==0:
-            print(f"Epoch [{epoch + 1}/{num_epochs}], Loss: {loss.item():.4f}")
+            # Calculate the loss
+            #loss_x = criterion(output, x)
+            loss = criterion(output, inputs)  # Use only the first 3 elements for Y
+            #loss = loss_x + loss_y  # Combine both losses
+            # Backpropagation and optimization
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            history.append(loss.item())
+            # Print progress
+        if epoch%100==0:
+                print(f"Epoch [{epoch + 1}/{num_epochs}], Loss: {loss.item():.4f}")
+except KeyboardInterrupt:
+    pass
+      
 
 torch.save(autoencoder.state_dict(), path+"GPUCluster/data/"+"autoencoder_model.pth")
 
