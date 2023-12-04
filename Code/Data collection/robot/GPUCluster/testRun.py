@@ -167,7 +167,7 @@ X_test=torch.tensor(X_test).to(device)
 Y_train=torch.tensor(Y_train).to(device)
 Y_test=torch.tensor(Y_test).to(device)
 
-def train(X_train,Y_train,X_test,Y_test,num_epochs = 100,learning_rate = 0.001):
+def train(X_train,Y_train,X_test,Y_test,num_epochs = 100,learning_rate = 0.001,batch_size=32):
     # Split your dataset into training and validation sets
     # train_data, val_data = ...
     lstm_model=LSTMModel(X_train.shape[2],50,2,Y_train.shape[1]).to(device)
@@ -180,35 +180,55 @@ def train(X_train,Y_train,X_test,Y_test,num_epochs = 100,learning_rate = 0.001):
     history_test=[]
     # Training loop
     for epoch in range(num_epochs):
+        # Training loop
         lstm_model.train()
+        epoch_train_loss = 0.0
 
-        optimizer.zero_grad()
-        # Forward pass
-        outputs = lstm_model(X_train)
+        # Iterate over batches
+        for i in range(0, len(X_train), batch_size):
+            optimizer.zero_grad()
+            # Get a batch of training data
+            X_batch = X_train[i:i + batch_size]
+            Y_batch = Y_train[i:i + batch_size]
 
-        # Calculate the loss
-        loss = criterion(outputs, Y_train)
+            # Forward pass
+            outputs = lstm_model(X_batch)
 
-        # Backpropagation
-        loss.backward()
-        optimizer.step()
+            # Calculate the loss
+            loss = criterion(outputs, Y_batch)
 
-        total_loss = loss.item()
-        history_train.append(total_loss)
-        print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {total_loss:.4f}")
+            # Backpropagation
+            loss.backward()
+            optimizer.step()
 
-        # Validation
+            epoch_train_loss += loss.item()
+
+        # Calculate average training loss for the epoch
+        avg_epoch_train_loss = epoch_train_loss / (len(X_train) / batch_size)
+        history_train.append(avg_epoch_train_loss)
+        print(f"Epoch [{epoch + 1}/{num_epochs}], Loss: {avg_epoch_train_loss:.4f}")
+
+        # Validation loop
         lstm_model.eval()
         with torch.no_grad():
-            total_val_loss = 0
+            epoch_val_loss = 0.0
 
-            outputs = lstm_model(X_test)
-            val_loss = criterion(outputs, Y_test)
-            total_val_loss = val_loss.item()
+            for i in range(0, len(X_test), batch_size):
+                # Get a batch of validation data
+                X_val_batch = X_test[i:i + batch_size]
+                Y_val_batch = Y_test[i:i + batch_size]
 
-            print(f"Validation Loss: {total_val_loss:.4f}")
-            history_test.append(total_val_loss)
-    # Save the trained model
+                # Forward pass for validation
+                val_outputs = lstm_model(X_val_batch)
+                val_loss = criterion(val_outputs, Y_val_batch)
+
+                epoch_val_loss += val_loss.item()
+
+            # Calculate average validation loss for the epoch
+            avg_epoch_val_loss = epoch_val_loss / (len(X_test) / batch_size)
+            history_test.append(avg_epoch_val_loss)
+            print(f"Validation Loss: {avg_epoch_val_loss:.4f}")
+
     torch.save(lstm_model.state_dict(), path+"GPUCluster/data/"+"lstm_model.pth")
     return np.array(history_train), np.array(history_test)
 
