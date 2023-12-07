@@ -118,7 +118,7 @@ def getData(X,y,T):
     return X_train, X_test, Y_train, Y_test
 # Define your Autoencoder class
 class Autoencoder(nn.Module):
-    def __init__(self, input_size, latent_size,output_size):
+    def __init__(self, input_size, latent_size):
         super(Autoencoder, self).__init__()
         self.encoder = nn.Sequential(
             nn.Linear(input_size, latent_size),
@@ -192,10 +192,10 @@ x = X_train.view(-1, input_size)
 optimizer = torch.optim.SGD(autoencoder.parameters(), lr=0.001)
 criterion = nn.MSELoss()
 
-batch_size=64
+batch_size=32
 
 # Training loop
-num_epochs = 1000
+num_epochs = 5000
 history=[]
 try:
     for epoch in range(num_epochs):
