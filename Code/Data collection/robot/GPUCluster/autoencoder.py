@@ -17,8 +17,8 @@ if sys.platform.startswith('win'):
     path="C:/Users/dexte/Documents/GitHub/TactileSensor/Code/Data collection/robot/"
 
 torch.cuda.empty_cache() 
-#device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-device=torch.device("cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+#device=torch.device("cpu")
 print(torch.version.cuda)
 print("GPU:",torch.cuda.is_available())
 def sort_data(name,vibration=True,dir="all"):
@@ -52,7 +52,17 @@ def gen_temporal_data_2(X_,y_,T):
     x=temp_x
     y=temp_y
     return x, y
-
+def gen_temporal_data(X_,y_,T):
+    X=X_.copy()
+    temp_x=np.zeros((X.shape[0]-T,X.shape[1]*T))
+    temp_y=np.zeros((X.shape[0]-T,y_.shape[1]))
+    for j in range(len(y_)-T): #loop through classes
+        ar=[X[j+k] for k in range(T)]
+        temp_x[j]=np.concatenate(ar,axis=0)
+        temp_y[j]=y_[j]
+    x=temp_x
+    y=temp_y
+    return x, y
 
 def augmented_pattern(x,y):
     isMod=False
@@ -88,7 +98,7 @@ def augmented_noise(X_):
     return X+np.random.normal(np.average(X),np.std(X)+1,X.shape)
 
 def getAugmentedData(X,y,T):
-    x,y=gen_temporal_data_2(X,y,T)
+    x,y=gen_temporal_data(X,y,T)
     x1=augmented_noise(x)
     x2,y1=augmented_pattern(x,y)
     x=np.concatenate([x,x1,x2])
@@ -105,7 +115,7 @@ def getAugmentedData(X,y,T):
     return X_train, X_test, Y_train, Y_test
 
 def getData(X,y,T):
-    X_,y_=gen_temporal_data_2(X,y,T)
+    X_,y_=gen_temporal_data(X,y,T)
     #reduction
     X_=(X_-np.average(X_))/np.std(X_)
     y=(y-np.average(y))/np.std(y)
@@ -138,7 +148,7 @@ class Autoencoder(nn.Module):
 
 
 
-X,y=sort_data("accmovementLeftFoot.csv")
+"""X,y=sort_data("accmovementLeftFoot.csv")
 X1,y1=sort_data("accmovementRightFoot.csv")
 X=np.concatenate((X,X1),axis=0)
 y=np.concatenate((y,y1),axis=0)
@@ -178,8 +188,9 @@ y=np.concatenate((y,y1),axis=0)
 X1,y1=sort_data("accmovementRightFootDay4.csv")
 X=np.concatenate((X,X1),axis=0)
 y=np.concatenate((y,y1),axis=0)
-
-X_train, X_test, Y_train, Y_test=getAugmentedData(X,y,50)
+"""
+X=np.load(path.replace("Data collection/robot/","Robots/Gonk droid/kalman_foot_data.npy"))
+X_train, X_test, Y_train, Y_test=getAugmentedData(X,np.zeros((len(X),1)),50)
 # Initialize the autoencoder
 input_size = 50 * 6
 latent_size = 64  # Choose an appropriate size for the latent space
@@ -192,10 +203,10 @@ x = X_train.view(-1, input_size)
 optimizer = torch.optim.SGD(autoencoder.parameters(), lr=0.001)
 criterion = nn.MSELoss()
 
-batch_size=32
+batch_size=64
 
 # Training loop
-num_epochs = 5000
+num_epochs = 1000
 history=[]
 try:
     for epoch in range(num_epochs):
@@ -222,6 +233,6 @@ except KeyboardInterrupt:
     pass
       
 
-torch.save(autoencoder.state_dict(), path+"GPUCluster/data/"+"autoencoder_model.pth")
+torch.save(autoencoder.state_dict(), path+"GPUCluster/data/"+"autoencoder_model_kalman.pth")
 
-np.save(path+"GPUCluster/data/train_loss",np.array(history))
+np.save(path+"GPUCluster/data/train_loss_kalman",np.array(history))
