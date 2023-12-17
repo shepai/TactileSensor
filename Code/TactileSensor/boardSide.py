@@ -26,7 +26,7 @@ def gather(low_pass=True,high_pass=True,alpha=0.2):
     global UT
     array=[]
     untouched=[]
-    for i in range(10):
+    for i in range(16):
         select_channel(i)
         value = SIG.read_u16()  # Read the analog value
         untouched.append(value)
@@ -35,7 +35,7 @@ def gather(low_pass=True,high_pass=True,alpha=0.2):
         if high_pass:
             value=alpha*b[i] + alpha*(value-a[i])
         array.append(value)
-    print(array)
+    print([float('{:f}'.format(array[i])) for i in range(len(array))])
     a=array.copy()
     b=array.copy()
     UT=untouched.copy()

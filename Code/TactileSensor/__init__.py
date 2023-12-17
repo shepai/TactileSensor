@@ -90,13 +90,32 @@ class Board:
         self.past_data=grid.copy()
         grid=processed.copy()
         if type_=="flat":
+            processed=processed[:10]
             grid=np.zeros((x,y))
             for i in range(x):
                 grid[i]=processed[i]
             for i in range(y):
                 grid[:,i]+=processed[x+i]
         elif type_=="round": #if round type return data
-            pass
+            grid=grid[:10]
+        elif type_=="foot":
+            grid=np.zeros((3,5))
+            grid[2][4]=processed[0]
+            grid[2][3]=processed[1]
+            grid[2][2]=processed[2]
+            grid[2][1]=processed[3]
+            grid[2][0]=processed[4]
+
+            grid[1][3]=processed[8]
+            grid[1][2]=processed[9]
+            grid[1][1]=processed[6]
+            grid[1][0]=processed[5]
+
+            grid[0][4]=processed[10]
+            grid[0][3]=processed[11]
+            grid[0][2]=processed[12]
+            grid[0][1]=processed[13]
+            grid[0][0]=processed[14]
         return grid
     def ReadAnalog(self,pin=28,alpha=0.1):
         self.COM.exec_raw_no_follow("adc_pin = machine.Pin("+str(pin)+")")
