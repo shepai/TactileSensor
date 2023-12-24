@@ -77,7 +77,7 @@ class Board:
         processed=data.split(",")
         grid=np.array(processed).astype(float)
         self.middle=np.average(grid)
-    def getSensor(self,type_="flat",x=5,y=5,alpha=0.6):
+    def getSensor(self,type_="flat",x=5,y=5,alpha=0.6,num=16):
         data=self.COM.exec('gather(alpha='+str(alpha)+')').decode("utf-8").replace("\r\n","").replace("[","").replace("]","").replace(" ","")
         grid=np.array(data.split(",")).astype(float)
         #self.zero()
@@ -97,7 +97,7 @@ class Board:
             for i in range(y):
                 grid[:,i]+=processed[x+i]
         elif type_=="round": #if round type return data
-            grid=grid[:10]
+            grid=grid[0:num]
         elif type_=="foot":
             grid=np.zeros((3,5))
             grid[2][4]=processed[0]
@@ -117,10 +117,20 @@ class Board:
             grid[0][1]=processed[13]
             grid[0][0]=processed[14]
         return grid
-    def ReadAnalog(self,pin=28,alpha=0.1):
+    def ReadAnalog(self,pin=26,alpha=0.1):
         self.COM.exec_raw_no_follow("adc_pin = machine.Pin("+str(pin)+")")
         self.COM.exec_raw_no_follow("adc = machine.ADC(adc_pin)\nalpha = "+str(alpha)+"\nfiltered_value = adc.read_u16()")
         self.COM.exec_raw_no_follow("""# Read the raw sensor value
+S0 = machine.Pin(0,machine.Pin.OUT)  # GP0
+S1 = machine.Pin(1,machine.Pin.OUT)  # GP1
+S2 = machine.Pin(2,machine.Pin.OUT)  # GP2
+S3 = machine.Pin(3,machine.Pin.OUT)  # GP3
+def select_channel(channel):
+    S0.value(int(channel[3]))
+    S1.value(int(channel[2]))
+    S2.value(int(channel[1]))
+    S3.value(int(channel[0]))
+select_channel("0001")                               
 sensor_value = adc.read_u16()
 
 # Apply the low-pass filter
@@ -128,9 +138,7 @@ filtered_value = alpha * sensor_value + (1 - alpha) * filtered_value
 
 # Print the filtered value
 print("Filtered Value:", filtered_value)
-
-# Wait for 0.1 seconds (100 milliseconds)
-time.sleep(0.1)""")
+""")
         val=float(self.COM.exec("print(filtered_value)").decode("utf-8").replace("\r\n",""))
         return val
     
