@@ -9,3 +9,12 @@ Assets/PCB/fp-info-cache
 *.kicad_pro
 *.lck
 Code/Data collection/robot/random_forest_model.pkl
+Assets/PCB/flatFoot_alt_design.csv
+Assets/PCB/flatFoot_alt_design.kicad_pcb
+Assets/PCB/Gerber.zip
+Assets/PCB/flatFoot_alt_design.kicad_pcb
+*.gbr
+Assets/PCB/Gerber/flatFoot_alt_design-bottom-pos.csv
+*.gbrjob
+*.drl
+*.xlsx
