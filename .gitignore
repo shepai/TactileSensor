@@ -18,3 +18,4 @@ Assets/PCB/Gerber/flatFoot_alt_design-bottom-pos.csv
 *.gbrjob
 *.drl
 *.xlsx
+*.pos
