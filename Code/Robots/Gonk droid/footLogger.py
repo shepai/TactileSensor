@@ -1,50 +1,50 @@
 from gonkController import *
 
 droid=gonk()
-droid.from gonkController import *
-
-droid=gonk()
 droid.display_face(droid.eye)
 print(droid.getGyro())
 print("Temperature:",droid.temp)
 print("Recording")
 droid.reset()
-name="accmovementLeftFoot.csv"
-droid.createFile(name,["x","y","z","s1","s2","s3","s4","s5","s6"])
-epochs=1000
-
+name="accmovementLeftFootDay6.csv"
+droid.createFile(name,["time_step","x","y","z"]+["s_1_"+str(i) for i in range(16)]+["s_2_"+str(i) for i in range(16)])
+epochs=100
+t=time.time()
+droid.move(0,15)
 for i in range(epochs):
-    for j in range(30,130):
+    print(i,time.time()-t)
+    t=time.time()
+    for j in range(25,80):
         d=droid.filter(droid.getFeet())
         droid.move(3,j)
         droid.writeData(name)
-        print(d)
-    for j in reversed(range(30,130)):
+        #print(d)
+    for j in reversed(range(25,80)):
         d=droid.filter(droid.getFeet())
         droid.move(3,j)
         droid.writeData(name)
-        print(d)
+        #print(d)
+#"""
+"""
+inverse
+"""
+name="accmovementRightFootDay5.csv"
+droid.createFile(name,["time_step","x","y","z"]+["s_1_"+str(i) for i in range(16)]+["s_2_"+str(i) for i in range(16)])
 
-print("Finished")
-
-display_face(droid.eye)
-print(droid.getGyro())
-print("Temperature:",droid.temp)
-print("Recording")
-droid.reset()
-droid.createFile("movementLeftFoot.csv",["x","y","z","s1","s2","s3","s4","s5","s6"])
-epochs=1000
-
+droid.move(3,130)
 for i in range(epochs):
-    for j in range(30,130):
+    print(i,time.time()-t)
+    t=time.time()
+    for j in range(60,100):
         d=droid.filter(droid.getFeet())
-        droid.move(3,j)
-        droid.writeData("movementLeftFoot.csv")
-        print(d)
-    for j in reversed(range(30,130)):
+        droid.move(0,j)
+        droid.writeData(name)
+        #print(d)
+    for j in reversed(range(60,100)):
         d=droid.filter(droid.getFeet())
-        droid.move(3,j)
-        droid.writeData("movementLeftFoot.csv")
-        print(d)
-
+        droid.move(0,j)
+        droid.writeData(name)
+        #print(d)
+#"""
 print("Finished")
+
