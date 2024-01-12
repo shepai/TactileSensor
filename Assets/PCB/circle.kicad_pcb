@@ -1699,6 +1699,8 @@
     (stroke (width 0.2) (type default)) (layer "B.Cu") (tstamp eb74cbf7-de30-4786-bfb8-2aa0917d23a3))
   (gr_line (start 138.684 107.315) (end 134.366 107.315)
     (stroke (width 0.2) (type default)) (layer "B.Cu") (tstamp f843c36e-de07-4bf3-8fc0-5b09d9dde94f))
+  (gr_line (start 132.842 101.346) (end 132.842 99.314)
+    (stroke (width 0.2) (type default)) (layer "B.Cu") (tstamp fa17bad7-eda1-472b-b8c5-6c8f04d10616))
   (gr_line (start 113.665 100.457) (end 114.935 99.314)
     (stroke (width 0.2) (type default)) (layer "B.Cu") (tstamp fa5dbe51-3c97-422d-8d3a-c4998b33206f))
   (gr_line (start 118.237 107.696) (end 118.618 107.569)
