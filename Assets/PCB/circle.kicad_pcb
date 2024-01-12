@@ -1787,7 +1787,7 @@
   (gr_text "S1" (at 128.524 120.904 90) (layer "F.SilkS") (tstamp cec71308-cc34-4784-b4b8-6cfe238d079c)
     (effects (font (size 1 1) (thickness 0.1)) (justify left bottom))
   )
-  (gr_text "Tactile Sensor\nPressTip V2.2\n" (at 120.142 86.614) (layer "F.SilkS") (tstamp d8ff4857-21fe-431e-8655-fad557391052)
+  (gr_text "Tactile Sensor\nPressTip V2.3\n" (at 120.142 86.614) (layer "F.SilkS") (tstamp d8ff4857-21fe-431e-8655-fad557391052)
     (effects (font (size 1 1) (thickness 0.2) bold) (justify left bottom))
   )
 
