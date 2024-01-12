@@ -1,5 +1,7 @@
 """
-CircuitPython variant of gonk
+CircuitPython variant of gonk robot
+
+Uses SD card to store data and four motors to locomote. Makes use of the tactile PCB sensor
 """
 
 import board
@@ -74,23 +76,37 @@ class gonk:
         pins=[board.GP17,board.GP20,board.GP21,board.GP22]
         self.servos=[servo.Servo(pwmio.PWMOut(pins[i], frequency=50),min_pulse=750, max_pulse=2250) for i in range(len(pins))]
         #setup feet
-        self.S0 = digitalio.DigitalInOut(board.GP4)
-        self.S0.direction = digitalio.Direction.OUTPUT
-        self.S1 = digitalio.DigitalInOut(board.GP3)
-        self.S1.direction = digitalio.Direction.OUTPUT
-        self.S2 = digitalio.DigitalInOut(board.GP1)
-        self.S2.direction = digitalio.Direction.OUTPUT
-        self.S3 = digitalio.DigitalInOut(board.GP0)
-        self.S3.direction = digitalio.Direction.OUTPUT
-        self.pin = analogio.AnalogIn(board.GP26)
+        self.LF=[digitalio.DigitalInOut(board.GP2),digitalio.DigitalInOut(board.GP3),digitalio.DigitalInOut(board.GP4),digitalio.DigitalInOut(board.GP5)]
+        for i in range(len(self.LF)): #set mode
+            self.LF[i].direction = digitalio.Direction.OUTPUT
+        self.RF=[digitalio.DigitalInOut(board.GP0),digitalio.DigitalInOut(board.GP1),digitalio.DigitalInOut(board.GP14),digitalio.DigitalInOut(board.GP15)]
+        for i in range(len(self.RF)): #set mode
+            self.RF[i].direction = digitalio.Direction.OUTPUT
+        self.Lpin = analogio.AnalogIn(board.GP27)
+        self.Rpin = analogio.AnalogIn(board.GP26)
+        self.openPinL=digitalio.DigitalInOut(board.GP7)
+        self.openPinR=digitalio.DigitalInOut(board.GP6)
+        self.openPinL.direction = digitalio.Direction.OUTPUT
+        self.openPinR.direction = digitalio.Direction.OUTPUT
+        self.openPinL.value=0
+        self.openPinR.value=0
         #bandpass filter
         self.LP=self.getFeet()
         self.HP=self.getFeet()
     def reset(self):
+        """
+        reset all motors
+        """
         angles=[100,50,170,100]
         for i in range(len(self.servos)):
             self.servos[i].angle=angles[i]
     def move(self,servo,angle,step=2):
+        """
+        move the servo in a slower way
+        @param servo
+        @param angle
+        @param step (step size to move) larger step means quicker motor
+        """
         assert servo>=0 and servo<len(self.servos),"Incorrect index"
         if angle<self.servos[servo].angle:
             for i in reversed(range(angle,int(self.servos[servo].angle),step)):
@@ -101,26 +117,38 @@ class gonk:
                 self.servos[servo].angle+=step
                 time.sleep(0.01)
         self.servos[servo].angle=angle
-    def getFeet(self,ignore=[2,3,6,7]):
-        def select_channel(channel):
+    def getFeet(self,ignore=[]): #get the readings from both feet
+        def select_channel(channel,foot): #select a channel
             channel=f'{channel:04b}'
-            self.S0.value=int(channel[3])
-            self.S1.value=int(channel[2])
-            self.S2.value=int(channel[1])
-            self.S3.value=int(channel[0])
-        a=[]
-        for i in range(10):
-            select_channel(i)
-            if i not in ignore:
-                a.append(self.pin.value)
+            foot[0].value=int(channel[3])
+            foot[1].value=int(channel[2])
+            foot[2].value=int(channel[1])
+            foot[3].value=int(channel[0])
+        a=np.zeros((32,))
+        for i in range(16): #loop through sensors on each foot
+            select_channel(i,self.LF)
+            a[i]=self.Lpin.value
+        for i in range(16):
+            select_channel(i,self.RF)
+            a[16+i]=self.Rpin.value
         return np.array(a)
     def filter(self,array,alpha=0.3):
+        """
+        Apply a bandpass filter to the array of analogue values
+        @param array
+        @param alpha
+        """
         low_pass=(1-alpha)*self.LP +(alpha*array)
         highpass=alpha*self.HP + alpha*(low_pass-self.LP)
         self.LP=low_pass.copy()
         self.HP=highpass.copy()
         return highpass
     def move(self,servo,angle):
+        """
+        Move the servo to the set angle
+        @param servo is the index of the servo
+        @param angle is the angle to move to
+        """
         assert servo>=0 and servo<len(self.servos),"Incorrect index"
         self.servos[servo].angle=angle
     def display_face(self,motion):
@@ -141,7 +169,7 @@ class gonk:
         s=""
         for i in range(len(pressure)):
             s+=str(pressure[i])+","
-        if self.mpu and self.sd:
+        if self.mpu and self.sd: #check all the needed sensors are active
             with open("/sd/"+str(name), "a") as f:
                 f.write(str(time.time()-self.time)+","+str(gyro[0])+","+str(gyro[1])+","+str(gyro[2])+","+s[:-1]+"\n")
         else: print("Cannot save as sensor or storage device missing")
@@ -165,13 +193,20 @@ class gonk:
                     self.display[j,4]=1
             time.sleep(0.1)
             self.display_face(self.eye)
-    def getGyro(self):
+    def getGyro(self,mode=1):
+        """
+        Record either gyro or acc depending on the mode
+        """
         if self.mpu:
-            gyro=self.mpu_.gyro
-            acc=self.mpu_.acceleration
-            self.temp=self.mpu_.temperature
+            acc=None
+            if mode==0:acc=self.mpu_.gyro
+            if mode==1:acc=self.mpu_.acceleration
+            self.temp=self.mpu_.temperature #not used
             return acc
     def playSound(self):
+        """
+        Play the gonk droid sound
+        """
         mp3 = open("gonk-droid-sound.mp3", "rb")
         decoder = MP3Decoder(mp3)
         decoder.file = open("gonk-droid-sound.mp3", "rb")
@@ -180,8 +215,15 @@ class gonk:
         while time.monotonic() - t < 3:
             pass
     def createFile(self,name,keys):
+        """
+        creates a file on the sd card 
+        @param name is the name of the csv
+        @param gets is an array of names to be the column names
+        """
+        if ".csv" not in name: name+=".csv"
         self.time=time.time()
         with open("/sd/"+str(name), "w") as f:
             for j in range(len(keys)-1):
                 f.write(keys[j]+",")
             f.write(keys[-1]+"\n")
+
