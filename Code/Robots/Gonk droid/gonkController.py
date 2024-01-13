@@ -93,6 +93,7 @@ class gonk:
         #bandpass filter
         self.LP=self.getFeet()
         self.HP=self.getFeet()
+        self.time=time.time()
     def reset(self):
         """
         reset all motors
