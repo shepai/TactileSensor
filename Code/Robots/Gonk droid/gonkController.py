@@ -79,7 +79,7 @@ class gonk:
         self.LF=[digitalio.DigitalInOut(board.GP2),digitalio.DigitalInOut(board.GP3),digitalio.DigitalInOut(board.GP4),digitalio.DigitalInOut(board.GP5)]
         for i in range(len(self.LF)): #set mode
             self.LF[i].direction = digitalio.Direction.OUTPUT
-        self.RF=[digitalio.DigitalInOut(board.GP0),digitalio.DigitalInOut(board.GP1),digitalio.DigitalInOut(board.GP14),digitalio.DigitalInOut(board.GP15)]
+        self.RF=[digitalio.DigitalInOut(board.GP0),digitalio.DigitalInOut(board.GP1),digitalio.DigitalInOut(board.GP14),digitalio.DigitalInOut(board.GP16)]
         for i in range(len(self.RF)): #set mode
             self.RF[i].direction = digitalio.Direction.OUTPUT
         self.Lpin = analogio.AnalogIn(board.GP27)
@@ -226,4 +226,5 @@ class gonk:
             for j in range(len(keys)-1):
                 f.write(keys[j]+",")
             f.write(keys[-1]+"\n")
+
 
