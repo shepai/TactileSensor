@@ -93,7 +93,7 @@ class gonk:
         #bandpass filter
         self.LP=self.getFeet()
         self.HP=self.getFeet()
-        self.time=time.time()
+        self.time=time.monotonic()
     def reset(self):
         """
         reset all motors
@@ -172,7 +172,7 @@ class gonk:
             s+=str(pressure[i])+","
         if self.mpu and self.sd: #check all the needed sensors are active
             with open("/sd/"+str(name), "a") as f:
-                f.write(str(time.time()-self.time)+","+str(gyro[0])+","+str(gyro[1])+","+str(gyro[2])+","+s[:-1]+"\n")
+                f.write(str(time.monotonic()-self.time)+","+str(gyro[0])+","+str(gyro[1])+","+str(gyro[2])+","+s[:-1]+"\n")
         else: print("Cannot save as sensor or storage device missing")
     def blink(self):
         #blink the eye
@@ -222,7 +222,7 @@ class gonk:
         @param gets is an array of names to be the column names
         """
         if ".csv" not in name: name+=".csv"
-        self.time=time.time()
+        self.time=time.monotonic()
         with open("/sd/"+str(name), "w") as f:
             for j in range(len(keys)-1):
                 f.write(keys[j]+",")
