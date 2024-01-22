@@ -19,3 +19,4 @@ Assets/PCB/Gerber/flatFoot_alt_design-bottom-pos.csv
 *.drl
 *.xlsx
 *.pos
+Code/Data collection/edges/xdata1-.npy
