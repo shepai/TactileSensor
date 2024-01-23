@@ -199,10 +199,19 @@ class gonk:
         Record either gyro or acc depending on the mode
         """
         if self.mpu:
-            acc=None
-            if mode==0:acc=self.mpu_.gyro
-            if mode==1:acc=self.mpu_.acceleration
-            self.temp=self.mpu_.temperature #not used
+            c=0
+            found=False
+            while c<100 and not found:
+                try:
+                    acc=None
+                    if mode==0:acc=self.mpu_.gyro
+                    if mode==1:acc=self.mpu_.acceleration
+                    self.temp=self.mpu_.temperature #not used
+                    found=True
+                except OSError:
+                    pass
+                c+=1
+            if not found: raise ValueError("MPU disconnected")
             return acc
     def playSound(self):
         """
