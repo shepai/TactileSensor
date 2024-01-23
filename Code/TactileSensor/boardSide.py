@@ -8,6 +8,8 @@ S2 = machine.Pin(2,machine.Pin.OUT)  # GP2
 S3 = machine.Pin(3,machine.Pin.OUT)  # GP3
 SIG = machine.ADC(26)  # GP28
 
+SE = machine.Pin(4,machine.Pin.OUT)  # GP3
+SE.value(0)
 a=[]
 b=[]
 
@@ -35,7 +37,7 @@ def gather(low_pass=True,high_pass=True,alpha=0.2):
         if high_pass:
             value=alpha*b[i] + alpha*(value-a[i])
         array.append(value)
-    print([float('{:f}'.format(array[i])) for i in range(len(array))])
+    print([float('{:f}'.format(untouched[i])) for i in range(len(array))])
     a=array.copy()
     b=array.copy()
     UT=untouched.copy()
