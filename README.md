@@ -1,10 +1,26 @@
 # TactileSensor
-Development of a soft tactile sensors using pressure resistors and soft padding. Ater the development of software fr controlling <a href="https://github.com/shepai/RoboSkin">high resolution tactile sensors</a> we evaluated the performance of low resolution tactile sensors. These devices are cheaper to manufacture than high resolution sensors, and for feet tasks the resolution difference makes little difference. 
 
+This repository focuses on the development of soft tactile sensors utilizing pressure resistors and soft padding. The project follows the successful development of software for controlling [high-resolution tactile sensors](https://github.com/shepai/RoboSkin).
 
+## Overview
 
+Low-resolution tactile sensors have been evaluated for performance, offering a cost-effective alternative to their high-resolution counterparts. Specifically designed for tasks involving feet, where the resolution difference has minimal impact, these sensors present an economical and practical solution.
 
-# Related publications
+## Project Structure
 
-<a href="https://arxiv.org/abs/2310.08192">Slip Detection and Surface Prediction Through Bio-Inspired Tactile Feedback </a>
+- **/code**: Holds the source code for the software controlling the low-resolution tactile sensors.
+- **/assets**: Contains documentation related to the 3d print, laser cut and PCB files used
 
+## Related Publications
+
+Explore our related publications:
+
+- [Slip Detection and Surface Prediction Through Bio-Inspired Tactile Feedback](https://arxiv.org/abs/2310.08192)
+
+## Getting Started
+
+Follow these steps to set up the project on your local machine:
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/shepai/TactileSensor.git
