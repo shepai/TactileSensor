@@ -30,6 +30,9 @@ class gonk:
     def __init__(self):
         self.DELAY=0.0001
         self.i2c = io.I2C(board.GP9, board.GP8)
+        self.i2c.try_lock()
+        print("devices",self.i2c.scan())
+        self.i2c.unlock()
         #setup sd card
         spi = busio.SPI(board.GP10, MOSI=board.GP11, MISO=board.GP12)
         cs = board.GP15
@@ -201,7 +204,7 @@ class gonk:
         if self.mpu:
             c=0
             found=False
-            while c<100 and not found:
+            while c<100 and not found: #attempt to validate the mpu incase of disconnetion bug
                 try:
                     acc=None
                     if mode==0:acc=self.mpu_.gyro
@@ -211,7 +214,14 @@ class gonk:
                 except OSError:
                     pass
                 c+=1
-            if not found: raise ValueError("MPU disconnected")
+            if not found: #if it is still not found try reconnect
+                try:
+                    self.mpu_ = adafruit_mpu6050.MPU6050(self.i2c)
+                except:
+                    self.i2c.try_lock()
+                    print("devices",self.i2c.scan())
+                    self.i2c.unlock()
+                    raise ValueError("MPU disconnected")
             return acc
     def playSound(self):
         """
