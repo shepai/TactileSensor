@@ -164,7 +164,7 @@ class gonk:
                     self.display.show()
 
                     time.sleep(self.DELAY)
-    def writeData(self,name,gyro=None,pressure=None):
+    def writeData(self,name,gyro=None,pressure=None,servos=False):
         #pressure to string
         if type(gyro)==type(None):
             gyro=self.getGyro()
@@ -175,7 +175,10 @@ class gonk:
             s+=str(pressure[i])+","
         if self.mpu and self.sd: #check all the needed sensors are active
             with open("/sd/"+str(name), "a") as f:
-                f.write(str(time.monotonic()-self.time)+","+str(gyro[0])+","+str(gyro[1])+","+str(gyro[2])+","+s[:-1]+"\n")
+                if not servos:
+                    f.write(str(time.monotonic()-self.time)+","+str(gyro[0])+","+str(gyro[1])+","+str(gyro[2])+","+s[:-1]+"\n")
+                if servos:
+                    f.write(str(time.monotonic()-self.time)+","+str(gyro[0])+","+str(gyro[1])+","+str(gyro[2])+","+s[:-1]+","+str(self.servos[0].angle)+","+str(self.servos[1].angle)+","+str(self.servos[2].angle)+","+str(self.servos[3].angle)+"\n")
         else: print("Cannot save as sensor or storage device missing")
     def blink(self):
         #blink the eye
@@ -204,7 +207,7 @@ class gonk:
         if self.mpu:
             c=0
             found=False
-            while c<100 and not found: #attempt to validate the mpu incase of disconnetion bug
+            while c<50 and not found: #attempt to validate the mpu incase of disconnetion bug
                 try:
                     acc=None
                     if mode==0:acc=self.mpu_.gyro
@@ -212,15 +215,18 @@ class gonk:
                     self.temp=self.mpu_.temperature #not used
                     found=True
                 except OSError:
+                    print("attempt reading again")
                     pass
                 c+=1
             if not found: #if it is still not found try reconnect
                 try:
-                    self.mpu_ = adafruit_mpu6050.MPU6050(self.i2c)
-                except:
                     self.i2c.try_lock()
                     print("devices",self.i2c.scan())
                     self.i2c.unlock()
+                    print("attempt reconnection")
+                    self.mpu_ = adafruit_mpu6050.MPU6050(self.i2c)
+                    return self.getGyro(mode=mode)
+                except:
                     raise ValueError("MPU disconnected")
             return acc
     def playSound(self):
@@ -246,5 +252,7 @@ class gonk:
             for j in range(len(keys)-1):
                 f.write(keys[j]+",")
             f.write(keys[-1]+"\n")
+
+
 
 
