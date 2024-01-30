@@ -22,22 +22,43 @@ data={"timestep":[],"servo1":[],"servo2":[],"servo3":[],"p1":[],"p2":[],"p3":[],
 filename="test.csv"
 path="/its/home/drs25/Documents/GitHub/TactileSensor/Code/Data collection/robot/spiderData/"
 
-def run(dt=0.01):
+def run(dt=0.01): #move through making recordings
     #future will need a move till placed
     data=[]
     t=time.time()
-    for i in range(0,180):
+    for i in range(10,170):
         b.moveServo(7,i)
         time.sleep(dt)
-        passed=time.time()
+        passed=time.time()-t
         data.append([passed,b.getServo(8),b.getServo(7),b.getServo(6)]+list(b.getSensor(type_="round")))
-    return np.array(data)
+    b.moveServo(6,105)
+    time.sleep(1)
+    return data
 
-def resetTrial():
+def resetTrial(): #reset to initial position
     b.moveServo(8,150)
-    b.moveServo(7,0)
+    b.moveServo(7,10)
+    time.sleep(1)
     b.moveServo(6,55)
 
 
-run()
-resetTrial()
+num_trials=2
+dt=0.001
+file=open(path+filename,'w')
+header=""
+for name in list(data.keys()):
+    header+=name+","
+file.write(header[:-2]+"\n")
+for i in range(num_trials): #loop through 
+    print("Trial",i+1)
+    d=run(dt) #move through time
+    resetTrial() #reset to start position
+    #write data in csv format
+    for j in range(len(d)):
+        str_=""
+        for k in range(len(d[j])):
+            print(d[j][k])
+            str_+=str(d[j][k])+","
+        file.write(str_[:-2]+"\n") #write in csv format
+
+

@@ -72,7 +72,7 @@ class Board:
     def moveServo(self,num,angle):
         self.COM.exec_raw_no_follow('sb.servoWrite('+str(num)+','+str(angle)+')')
     def getServo(self,servo):
-        data=self.COM.exec('sb.getServo()'+str(servo)+')').decode("utf-8").replace("\r\n","").replace("[","").replace("]","").replace(" ","")
+        data=self.COM.exec('sb.getServo('+str(servo)+')').decode("utf-8").replace("\r\n","").replace("[","").replace("]","").replace(" ","")
         return data
     def getSensor(self,type_="flat",x=5,y=5,alpha=0.6,num=16):
         data=self.COM.exec('gather(alpha='+str(alpha)+')').decode("utf-8").replace("\r\n","").replace("[","").replace("]","").replace(" ","")
