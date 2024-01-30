@@ -57,8 +57,8 @@ for i in range(num_trials): #loop through
     for j in range(len(d)):
         str_=""
         for k in range(len(d[j])):
-            print(d[j][k])
             str_+=str(d[j][k])+","
         file.write(str_[:-2]+"\n") #write in csv format
 
 
+file.close()

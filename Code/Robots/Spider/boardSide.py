@@ -69,7 +69,7 @@ class servoBot:
     def getServo(self,servo):
         if((servo<1) or (servo>8)):
             raise Exception("INVALID SERVO NUMBER") #harsh, but at least you'll know
-        return self.servos[servo-1]
+        print(self.servos[servo-1])
 
 # Function to select a channel on the multiplexer
 def select_channel(channel):
