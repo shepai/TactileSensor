@@ -39,15 +39,21 @@ class Board:
                 file="C:/Users/dexte/Documents/GitHub/TactileSensor/Code/TactileSensor/boardSide.py"
             else:
                 file="/its/home/drs25/Documents/GitHub/TactileSensor/Code/TactileSensor/boardSide.py"
+        i=0
+        res=[]
         while COM=="":
             try:
                 res=self.serial_ports()
                 print("ports:",res)
-                self.connect(res[0])
+                self.connect(res[i])
                 self.runFile(file) #C:/Users/dexte/OneDrive/Documents/GitHub/TactileSensor/Code/TactileSensor/boardSide.py
-                COM=res[0]
+                COM=res[i]
             except IndexError:
                 time.sleep(1)
+            except pyboard.PyboardError:
+                i+=1
+                if i>=len(res):
+                    i=0
     def serial_ports(self):
         """
         Read the all ports that are open for serial communication
