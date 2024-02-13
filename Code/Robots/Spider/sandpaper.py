@@ -3,7 +3,9 @@ import numpy as np
 import time
 
 b=Board() #create connection to controller
-b.autoConnect("/its/home/drs25/Documents/GitHub/TactileSensor/Code/Robots/Spider/boardSide.py") #run servo controller
+winpath="C:/Users/dexte/Documents/GitHub/TactileSensor/Code/Robots/Spider/boardSide.py"
+linpath="/its/home/drs25/Documents/GitHub/TactileSensor/Code/Robots/Spider/boardSide.py"
+b.autoConnect(winpath) #run servo controller
 
 
 
@@ -19,14 +21,15 @@ print("Begin")
 
 data={"timestep":[],"servo1":[],"servo2":[],"servo3":[],"p1":[],"p2":[],"p3":[],"p4":[],"p5":[],"p6":[],"p7":[],"p8":[],"p9":[],"p10":[],"p11":[],"p12":[],"p13":[],"p14":[],"p15":[],"p16":[],"vibration":[]}
 
-filename="test.csv"
-path="/its/home/drs25/Documents/GitHub/TactileSensor/Code/Data collection/robot/spiderData/"
-
+filename="smooth.csv"
+path_l="/its/home/drs25/Documents/GitHub/TactileSensor/Code/Data collection/robot/spiderData/"
+path_w="C:/Users/dexte/Documents/GitHub/TactileSensor/Code/Data collection/robot/spiderData/"
+path=path_w
 def run(dt=0.01): #move through making recordings
     #future will need a move till placed
     data=[]
     t=time.time()
-    for i in range(10,170):
+    for i in range(10,120):
         b.moveServo(7,i)
         time.sleep(dt)
         passed=time.time()-t
@@ -36,13 +39,13 @@ def run(dt=0.01): #move through making recordings
     return data
 
 def resetTrial(): #reset to initial position
-    b.moveServo(8,150)
+    b.moveServo(8,170)
     b.moveServo(7,10)
     time.sleep(1)
-    b.moveServo(6,55)
+    b.moveServo(6,75)
 
 
-num_trials=2
+num_trials=30
 dt=0.001
 file=open(path+filename,'w')
 header=""

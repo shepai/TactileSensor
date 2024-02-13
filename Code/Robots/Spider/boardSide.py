@@ -106,6 +106,6 @@ b=gather(low_pass=False,high_pass=False)
 UT=gather(low_pass=False,high_pass=False)
         
 sb=servoBot()
-sb.servoWrite(8,150)
+sb.servoWrite(8,170)
 sb.servoWrite(7,0)
-sb.servoWrite(6,55)
+sb.servoWrite(6,75)
