@@ -6,7 +6,7 @@ S0 = machine.Pin(0,machine.Pin.OUT)  # GP0
 S1 = machine.Pin(1,machine.Pin.OUT)  # GP1
 S2 = machine.Pin(2,machine.Pin.OUT)  # GP2
 S3 = machine.Pin(3,machine.Pin.OUT)  # GP3
-SIG = machine.ADC(26)  # GP28
+SIG = machine.ADC(26)  # GP26
 
 SE = machine.Pin(4,machine.Pin.OUT)  # GP3
 SE.value(0)
