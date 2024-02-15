@@ -71,7 +71,7 @@ pixels.fill((0,200,0))
 pixels.show()
 
 print(getFilename("file"))
-surfaces=["test","rough","wood","concrete","nothing"]
+surfaces=["rough","smooth","concrete","nothing"]
 record=False
 mode=0
 filename=".."
