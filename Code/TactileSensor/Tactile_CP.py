@@ -25,7 +25,9 @@ class Foot:
         for pin in pins:
             self.s.append(pin)  # GPIO
         self.SIG = AnalogIn(analog)# GP26
-        digitalio.DigitalInOut(out)
+        E_pin=digitalio.DigitalInOut(out)
+        E_pin.direction=digitalio.Direction.OUTPUT
+        E_pin.value=1
         self.low_pass=[0 for i in range(16)]
         self.band_pass=[0 for i in range(16)]
         self.alpha=alpha
@@ -39,10 +41,10 @@ class Foot:
             self.select_channel(i)
             value = self.SIG.value # Read the analog value
             ar.append(value)
-            value=(1-self.alpha)*self.a[i] + (self.alpha*value) #low pass filter
-            self.a[i]=value
-            value=self.alpha*self.b[i] + self.alpha*(value-self.a[i]) #bandpass filter
-            self.b[i]=value
+            value=(1-self.alpha)*self.low_pass[i] + (self.alpha*value) #low pass filter
+            self.low_pass[i]=value
+            value=self.alpha*self.band_pass[i] + self.alpha*(value-self.low_pass[i]) #bandpass filter
+            self.band_pass[i]=value
         return ar
     
 class Foot_i2c(I2C_master):
@@ -64,18 +66,27 @@ class Foot_i2c(I2C_master):
             self.select_channel(i)
             value=self.SIG.value
             ar.append(value)
-            value=(1-self.alpha)*self.a[i] + (self.alpha*value) #low pass filter
-            self.a[i]=value
-            value=self.alpha*self.b[i] + self.alpha*(value-self.a[i]) #bandpass filter
-            self.b[i]=value
+            value=(1-self.alpha)*self.low_pass[i] + (self.alpha*value) #low pass filter
+            self.low_pass[i]=value
+            value=self.alpha*self.band_pass[i] + self.alpha*(value-self.low_pass[i]) #bandpass filter
+            self.band_pass[i]=value
+    def read_sig(self): #return basic signal
+        self.read()
+        return self.s
+    def read_LP(self): #return low passed signal
+        self.read()
+        return self.low_pass
+    def read_BP(self): #return band passed signal
+        self.read()
+        return self.band_pass
 
 class Plate(I2C_master):
     def __init__(self,analog,i2c=None,address=0x21,sda=None,scl=None,alpha=0.1):
         super().__init__(analog,i2c=None,address=0x21,sda=None,scl=None)
         self.s=[[self.mcp.get_pin(i+j) for i in range(4)] for j in range(6)] #needs exact values
         self.SIG = AnalogIn(analog)# GP26
-        self.low_pass=[0 for i in range(16)]
-        self.band_pass=[0 for i in range(16)]
+        self.low_pass=[0 for i in range(16*6)]
+        self.band_pass=[0 for i in range(16*6)]
         self.alpha=alpha
     def select_channel(self,boardID,channel):
         channel=f'{channel:04b}'
@@ -88,7 +99,16 @@ class Plate(I2C_master):
             self.select_channel(i)
             value=self.SIG.value
             ar.append(value)
-            value=(1-self.alpha)*self.a[i] + (self.alpha*value) #low pass filter
-            self.a[i]=value
-            value=self.alpha*self.b[i] + self.alpha*(value-self.a[i]) #bandpass filter
-            self.b[i]=value
+            value=(1-self.alpha)*self.low_pass[i] + (self.alpha*value) #low pass filter
+            self.low_pass[i]=value
+            value=self.alpha*self.band_pass[i] + self.alpha*(value-self.low_pass[i]) #bandpass filter
+            self.band_pass[i]=value
+    def read_sig(self):
+        self.read()
+        return self.s
+    def read_LP(self):
+        self.read()
+        return self.low_pass
+    def read_BP(self):
+        self.read()
+        return self.band_pass
