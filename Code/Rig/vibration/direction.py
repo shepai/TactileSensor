@@ -22,7 +22,7 @@ try:
         print("Complete:",round((i/samples)*100,1),"%","Time taken:",round((time.time()-t1)/60,1),"minutes")
         sensor=exp.direction(steps)
         data[i]=sensor
-        np.save("C:/Users/dexte/Documents/GitHub/TactileSensor/Code/Data collection/pressures/directionValsVibe_1",data)
+        np.save("C:/Users/dexte/Documents/GitHub/TactileSensor/Code/Data collection/pressures/VibeLego",data)
 except KeyboardInterrupt:
     pass
 

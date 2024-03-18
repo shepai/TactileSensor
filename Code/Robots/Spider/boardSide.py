@@ -7,6 +7,7 @@ S1 = machine.Pin(1,machine.Pin.OUT)  # GP1
 S2 = machine.Pin(2,machine.Pin.OUT)  # GP2
 S3 = machine.Pin(3,machine.Pin.OUT)  # GP3
 SIG = machine.ADC(26)  # GP28
+SIG2 = machine.ADC(27)  # GP28
 
 SE = machine.Pin(4,machine.Pin.OUT)  # GP3
 SE.value(0)
@@ -79,7 +80,6 @@ def select_channel(channel):
     S2.value(int(channel[1]))
     S3.value(int(channel[0]))
 
-
 def gather(low_pass=True,high_pass=True,alpha=0.2):
     global a
     global b
@@ -95,6 +95,7 @@ def gather(low_pass=True,high_pass=True,alpha=0.2):
         if high_pass:
             value=alpha*b[i] + alpha*(value-a[i])
         array.append(value)
+    #array[-1]=SIG2.read_u16() #for external sensor
     print([float('{:f}'.format(untouched[i])) for i in range(len(array))])
     a=array.copy()
     b=array.copy()
@@ -106,6 +107,12 @@ b=gather(low_pass=False,high_pass=False)
 UT=gather(low_pass=False,high_pass=False)
         
 sb=servoBot()
-sb.servoWrite(8,170)
-sb.servoWrite(7,0)
-sb.servoWrite(6,75)
+sb.servoWrite(8,175)
+sb.servoWrite(7,35)
+sb.servoWrite(6,80)
+"""
+b.moveServo(8,170)
+    b.moveServo(7,20)
+    time.sleep(1)
+    b.moveServo(6,100)
+"""

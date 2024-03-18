@@ -3,7 +3,7 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
-
+import keyboard
 
 matplotlib.use('TkAgg')
 
@@ -22,13 +22,13 @@ while True:
         round[i]=B.ReadAnalog()
     i+=1
     plt.cla()
-    val=(round-np.min(round))/(np.max(round)-np.min(round)) #normalise
-    plt.plot([k/5 for k in range(len(round))],val,label="sensor ")
+    
+    plt.plot([k/5 for k in range(len(round))],round,label="sensor ")
     plt.legend(loc="lower left")
     plt.title("Filtered round sensor")
     plt.xlabel("Time (seconds)")
     plt.ylabel("Analogue value")
     #plt.ylim([20000,25000])
     plt.pause(0.1)
-    #if keyboard.is_pressed('q'):  # if key 'q' is pressed 
-        #break
+    if keyboard.is_pressed('q'):  # if key 'q' is pressed 
+        break

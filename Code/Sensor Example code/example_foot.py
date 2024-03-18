@@ -82,5 +82,5 @@ y=np.array(y)
 
 filepath="C:/Users/dexte/Documents/GitHub/TactileSensor/Code/Data collection/edges/"
 
-np.save(filepath+"xdata1_soft1",x)
-np.save(filepath+"ydata1_soft1",y)
+np.save(filepath+"xdata_soft1",x)
+np.save(filepath+"ydata_soft1",y)

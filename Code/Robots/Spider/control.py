@@ -94,7 +94,7 @@ class Board:
             for i in range(y):
                 grid[:,i]+=processed[x+i]
         elif type_=="round": #if round type return data
-            grid=grid[0:num]
+            grid=grid
         elif type_=="foot":
             grid=np.zeros((3,5))
             grid[2][4]=processed[0]
