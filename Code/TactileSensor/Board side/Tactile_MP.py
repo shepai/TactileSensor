@@ -7,7 +7,7 @@ import time
 class Foot:
     def __init__(self,pins,analog,out,alpha=0.2):
         # Define the control pins
-        assert len(pins)!=4, "Incorrec number of pins"
+        assert len(pins)==4, "Incorrect number of pins"
         self.s=[]
         for pin in pins:
             self.s.append(machine.Pin(pin,machine.Pin.OUT))  # GPIO

@@ -20,7 +20,7 @@ class I2C_master:
 class Foot:
     def __init__(self,pins,analog,out,alpha=0.2):
         # Define the control pins
-        assert len(pins)!=4, "Incorrec number of pins"
+        assert len(pins)==4, "Incorrec number of pins"
         self.s=[]
         for pin in pins:
             self.s.append(pin)  # GPIO
