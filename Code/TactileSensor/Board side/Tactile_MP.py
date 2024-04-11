@@ -5,14 +5,13 @@ import machine
 import time
 
 class Foot:
-    def __init__(self,pins,analog,out,alpha=0.2):
+    def __init__(self,pins,analog,alpha=0.2):
         # Define the control pins
         assert len(pins)==4, "Incorrect number of pins"
         self.s=[]
         for pin in pins:
             self.s.append(machine.Pin(pin,machine.Pin.OUT))  # GPIO
         self.SIG = machine.ADC(analog)  # GP26
-        machine.Pin(out,machine.Pin.OUT)  # GP3
         self.low_pass=[0 for i in range(16)]
         self.band_pass=[0 for i in range(16)]
         self.alpha=alpha
@@ -24,6 +23,7 @@ class Foot:
         ar=[]
         for i in range(16):
             self.select_channel(i)
+            time.sleep(0.001)
             value = self.SIG.read_u16()  # Read the analog value
             ar.append(value)
             value=(1-self.alpha)*self.low_pass[i] + (self.alpha*value) #low pass filter
