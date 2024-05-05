@@ -15,6 +15,7 @@ class Foot:
         self.low_pass=[0 for i in range(16)]
         self.band_pass=[0 for i in range(16)]
         self.alpha=alpha
+        self.prev=None
     def select_channel(self,channel):
         channel=f'{channel:04b}'
         for i in range(len(self.s)):
@@ -31,3 +32,12 @@ class Foot:
             value=self.alpha*self.band_pass[i] + self.alpha*(value-self.low_pass[i])
             self.band_pass[i]=value
         return ar
+    def grads(self,dat):
+        if type(self.prev)==type(None):#if not real
+            self.prev=dat.copy()
+        grads=[]
+        for j in range(len(dat)):
+            grads.append((dat[j]-self.prev[j])/2)
+        #self.prev=dat.copy()
+        return grads
+
