@@ -75,17 +75,21 @@ class I2C_Tactile:
     def read(self):
         ar=[]
         for i in range(8):
-            ar.append(AnalogIn(self.adc2, i).value)
-            value=(1-self.alpha)*self.low_pass[i] + (self.alpha*value) #low pass filter
+            value=AnalogIn(self.adc2, i).value
+            ar.append(value)
+            value=int((1-self.alpha)*self.low_pass[i] + (self.alpha*value)) #low pass filter
+            if value<=0: value=0
             self.low_pass[i]=value
-            value=self.alpha*self.band_pass[i] + self.alpha*(value-self.low_pass[i]) #bandpass filter
-            self.band_pass[i]=value
+            #value=self.alpha*self.band_pass[i] + self.alpha*(value-self.low_pass[i]) #bandpass filter
+            #self.band_pass[i]=value
         for i in range(8):
-            ar.append(AnalogIn(self.adc1, i).value)
-            value=(1-self.alpha)*self.low_pass[8+i] + (self.alpha*value) #low pass filter
+            value=AnalogIn(self.adc1, i).value
+            ar.append(value)
+            value=int((1-self.alpha)*self.low_pass[8+i] + (self.alpha*value)) #low pass filter
+            if value<=0: value=0
             self.low_pass[8+i]=value
-            value=self.alpha*self.band_pass[8+i] + self.alpha*(value-self.low_pass[8+i]) #bandpass filter
-            self.band_pass[8+i]=value
+            #value=self.alpha*self.band_pass[8+i] + self.alpha*(value-self.low_pass[8+i]) #bandpass filter
+            #self.band_pass[8+i]=value
         return ar
     def read_sig(self): #return basic signal
         self.read()
