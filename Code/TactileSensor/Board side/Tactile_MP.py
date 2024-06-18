@@ -136,7 +136,7 @@ class I2C_Tactile:
     def read(self):
         ar=[]
         for i in range(8):
-            value=self.adc2.read(i).value
+            value=self.adc2.read(i)
             ar.append(value)
             value=int((1-self.alpha)*self.low_pass[i] + (self.alpha*value)) #low pass filter
             if value<=0: value=0
@@ -144,7 +144,7 @@ class I2C_Tactile:
             #value=self.alpha*self.band_pass[i] + self.alpha*(value-self.low_pass[i]) #bandpass filter
             #self.band_pass[i]=value
         for i in range(8):
-            value=self.adc1.read(i).value
+            value=self.adc1.read(i)
             ar.append(value)
             value=int((1-self.alpha)*self.low_pass[8+i] + (self.alpha*value)) #low pass filter
             if value<=0: value=0
@@ -161,3 +161,4 @@ class I2C_Tactile:
     def read_BP(self): #return band passed signal
         self.read()
         return self.band_pass
+    
